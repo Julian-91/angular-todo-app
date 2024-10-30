@@ -1,0 +1,14 @@
+<div class="todo-app">
+    <h1>Todo App</h1>
+    <div class="input-group">
+        <input type="text" [(ngModel)]="newTodoTitle" placeholder="Add a new todo" (keyup.enter)="addTodo()" />
+        <button (click)="addTodo()">Add</button>
+    </div>
+
+    <ul>
+        <li *ngFor="let todo of todos">
+            <app-todo-item [todo]="todo" (delete)="deleteTodo($event)"
+                (toggle)="toggleCompletion($event)"></app-todo-item>
+        </li>
+    </ul>
+</div>

@@ -1,0 +1,8 @@
+version: '3.5'
+
+services:
+  angular-todo-app:
+    build: .
+    container_name: angular-todo-app
+    ports:
+      - '4201:4200'

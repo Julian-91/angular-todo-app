@@ -1,0 +1,109 @@
+/* Center the app and set a max width */
+.todo-app {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Header styling */
+.todo-app h1 {
+    text-align: center;
+    color: #333333;
+    margin-bottom: 30px;
+}
+
+/* Input field and button container */
+.input-group {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+/* Input field styling */
+.todo-app input[type='text'] {
+    flex: 1;
+    padding: 12px 15px;
+    font-size: 16px;
+    border: 2px solid #dddddd;
+    border-radius: 4px 0 0 4px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.todo-app input[type='text']:focus {
+    border-color: #007bff;
+}
+
+/* Add button styling */
+.todo-app button {
+    padding: 12px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: #ffffff;
+    border: 2px solid #007bff;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.todo-app button:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+/* Todo list styling */
+.todo-app ul {
+    list-style: none;
+    padding: 0;
+}
+
+/* Individual todo items */
+.todo-app li {
+    background-color: #f8f9fa;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+}
+
+/* Checkbox styling */
+.todo-app li input[type='checkbox'] {
+    margin-right: 15px;
+    width: 18px;
+    height: 18px;
+}
+
+/* Todo title styling */
+.todo-app li .todo-title {
+    flex: 1;
+    font-size: 18px;
+    color: #333333;
+}
+
+.todo-app li .todo-title.completed {
+    text-decoration: line-through;
+    color: #999999;
+}
+
+/* Delete button styling */
+.todo-app li button {
+    background-color: transparent;
+    border: none;
+    color: #dc3545;
+    font-size: 18px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.todo-app li button:hover {
+    color: #a71d2a;
+}
+
+/* Hover effect on todo items */
+.todo-app li:hover {
+    background-color: #e9ecef;
+}
