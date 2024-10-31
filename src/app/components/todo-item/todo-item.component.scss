@@ -29,6 +29,13 @@ input[type='checkbox'] {
     }
 }
 
+.category {
+    flex: 1;
+    font-size: 18px;
+    color: $text-color;
+    margin-right: 20px;
+}
+
 button {
     background-color: transparent;
     border: none;

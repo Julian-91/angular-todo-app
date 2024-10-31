@@ -3,6 +3,7 @@
     <label for="todo-checkbox-{{ todo.id }}" class="todo-title" [ngClass]="{ 'completed': todo.isCompleted }">
         {{ todo.title }}
     </label>
+    <span class="category">[{{ todo.category }}]</span>
     <button (click)="onDelete()" aria-label="Delete todo">
         &#x2715;
     </button>

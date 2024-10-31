@@ -19,7 +19,10 @@ export class TodoService {
     const todosJson = localStorage.getItem(this.storageKey);
     if (todosJson) {
       try {
-        this.todos = JSON.parse(todosJson);
+        this.todos = JSON.parse(todosJson).map((todo: any) => ({
+          ...todo,
+          category: todo.category || 'General',
+        }));
         // Update nextId based on existing todos
         if (this.todos.length > 0) {
           this.nextId = Math.max(...this.todos.map((todo) => todo.id)) + 1;
@@ -42,11 +45,12 @@ export class TodoService {
     return this.todosSubject.asObservable();
   }
 
-  addTodo(title: string): void {
+  addTodo(title: string, category: string = 'General'): void {
     const newTodo: Todo = {
       id: this.nextId++,
       title,
       isCompleted: false,
+      category,
     };
     this.todos.push(newTodo);
     this.todosSubject.next(this.todos);
