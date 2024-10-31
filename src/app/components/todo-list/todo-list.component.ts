@@ -16,7 +16,10 @@ import { Subscription } from 'rxjs';
 export class TodoListComponent implements OnInit, OnDestroy {
   todos: Todo[] = [];
   newTodoTitle = '';
+  newTodoCategory = '';
+  selectedCategory = 'All';
   private subscription!: Subscription;
+  predefinedCategories = ['Client work', 'Personal work', 'Personal', 'Cooking', 'Others'];
 
   constructor(private todoService: TodoService) { }
 
@@ -32,8 +35,10 @@ export class TodoListComponent implements OnInit, OnDestroy {
 
   addTodo(): void {
     if (this.newTodoTitle.trim()) {
-      this.todoService.addTodo(this.newTodoTitle.trim());
+      const category = this.newTodoCategory.trim() || 'General';
+      this.todoService.addTodo(this.newTodoTitle.trim(), category);
       this.newTodoTitle = '';
+      this.newTodoCategory = '';
     }
   }
 
@@ -43,6 +48,20 @@ export class TodoListComponent implements OnInit, OnDestroy {
 
   toggleCompletion(id: number): void {
     this.todoService.toggleCompletion(id);
+  }
+
+  get categories(): string[] {
+    const todoCategories = this.todos.map((todo) => todo.category);
+    const allCategories = [...this.predefinedCategories, ...todoCategories]
+    return Array.from(new Set(allCategories));
+  }
+
+  get filteredTodos(): Todo[] {
+    if (this.selectedCategory === 'All') {
+      return this.todos;
+    } else {
+      return this.todos.filter((todo) => todo.category === this.selectedCategory)
+    }
   }
 
 }

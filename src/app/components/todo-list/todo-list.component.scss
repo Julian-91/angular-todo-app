@@ -22,6 +22,17 @@
     margin-bottom: 20px;
 }
 
+.input-group select {
+    flex: 1;
+    padding: 12px 15px;
+    font-size: 16px;
+    border: 2px solid #dddddd;
+    border-radius: 0 0 0 0;
+    outline: none;
+    transition: border-color 0.2s;
+    cursor: pointer;
+}
+
 /* Input field styling */
 .todo-app input[type='text'] {
     flex: 1;
@@ -35,6 +46,36 @@
 
 .todo-app input[type='text']:focus {
     border-color: #007bff;
+}
+
+.todo-app select:hover {
+    border-color: #007bff;
+}
+
+.todo-app .category-filter select {
+    flex: 1;
+    padding: 12px 15px;
+    font-size: 16px;
+    border: 2px solid #dddddd;
+    border-radius: 4px 4px 4px 4px;
+    outline: none;
+    transition: border-color 0.2s;
+    cursor: pointer;
+}
+
+.todo-app .category-filter select:hover {
+    border-color: #007bff;
+}
+
+.category-filter {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.category-filter label {
+    padding: 12px 15px;
+    font-size: 16px;
 }
 
 /* Add button styling */
