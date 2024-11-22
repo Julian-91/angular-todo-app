@@ -1,9 +1,11 @@
 <div class="todo-item">
     <input type="checkbox" id="todo-checkbox-{{ todo.id }}" [checked]="todo.isCompleted" (change)="onToggle()" />
-    <label for="todo-checkbox-{{ todo.id }}" class="todo-title" [ngClass]="{ 'completed': todo.isCompleted }">
-        {{ todo.title }}
-    </label>
-    <span class="category">[{{ todo.category }}]</span>
+    <div class="todo-content">
+        <label for="todo-checkbox-{{ todo.id }}" class="todo-title" [ngClass]="{ 'completed': todo.isCompleted }">
+            {{ todo.title }}
+        </label>
+        <span class="category">[{{ todo.category }}]</span>
+    </div>
     <button (click)="onDelete()" aria-label="Delete todo">
         &#x2715;
     </button>

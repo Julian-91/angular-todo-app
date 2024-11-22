@@ -8,6 +8,7 @@ $completed-text-color: #999999;
     display: flex;
     align-items: center;
     padding: 10px;
+
 }
 
 input[type='checkbox'] {
@@ -21,12 +22,20 @@ input[type='checkbox'] {
     font-size: 18px;
     color: $text-color;
     margin-right: 20px;
+    word-break: break-word;
+    overflow-wrap: anywhere;
 
     /* Increase this value to add more space */
     &.completed {
         text-decoration: line-through;
         color: $completed-text-color;
     }
+}
+
+.todo-content {
+    display: flex;
+    align-items: center;
+    flex: 1;
 }
 
 .category {
@@ -43,7 +52,7 @@ button {
     font-size: 18px;
     cursor: pointer;
     transition: color 0.2s;
-    margin-left: 20px;
+    margin-left: auto;
     /* Increase this value to add more space */
     flex-shrink: 0;
     /* Prevent the button from shrinking */
