@@ -1,8 +1,51 @@
-version: '3.5'
+version: '3.8'
 
 services:
-  angular-todo-app:
-    build: .
-    container_name: angular-todo-app
+  # Frontend Service
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     ports:
-      - '4201:4200'
+      - '4200:4200'
+    volumes:
+      - ./frontend:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm start
+    depends_on:
+      - backend
+
+  # Backend Service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=development
+    ports:
+      - '5001:5000'
+    volumes:
+      - ./backend:/app
+    command: npm run dev
+    environment:
+      - MONGODB_URI=mongodb://mongo:27017/todos
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+  # MongoDB Service
+  mongo:
+    image: mongo:4.4
+    restart: always
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: [ "CMD", "mongo", "--eval", "db.adminCommand('ping')" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mongo-data:
