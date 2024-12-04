@@ -9,9 +9,6 @@
             </option>
             <option value="">Add New Category</option>
         </select>
-        <!-- <input *ngIf="newTodoCategory === ''" type="text" [(ngModel)]="newTodoCategory" placeholder="New Category" /> -->
-
-        <!-- <input type="text" [(ngModel)]="newTodoCategory" placeholder="Category (optional)" /> -->
         <button (click)="addTodo()">Add</button>
     </div>
 
@@ -29,8 +26,16 @@
     <!-- Todo List -->
     <ul>
         <li *ngFor="let todo of filteredTodos">
-            <app-todo-item [todo]="todo" (delete)="deleteTodo($event)"
-                (toggle)="toggleCompletion($event)"></app-todo-item>
+            <app-todo-item [todo]="todo" 
+                          (delete)="deleteTodo($event)"
+                          (toggle)="toggleCompletion($event)">
+            </app-todo-item>
         </li>
     </ul>
+
+    <!-- Empty state -->
+    <div class="empty-state" *ngIf="!filteredTodos?.length">
+        <p>No todos found</p>
+        <p *ngIf="selectedCategory !== 'All'">Try changing the category filter</p>
+    </div>
 </div>

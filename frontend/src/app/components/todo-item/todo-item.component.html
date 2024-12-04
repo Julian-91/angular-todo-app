@@ -1,12 +1,22 @@
 <div class="todo-item">
-    <input type="checkbox" id="todo-checkbox-{{ todo._id }}" [checked]="todo.isCompleted" (change)="onToggle()" />
+    <div class="checkbox-wrapper">
+        <input type="checkbox" 
+               id="todo-checkbox-{{ todo._id }}" 
+               [checked]="todo.isCompleted" 
+               (change)="onToggle()" />
+        <span class="checkmark"></span>
+    </div>
     <div class="todo-content">
-        <label for="todo-checkbox-{{ todo._id }}" class="todo-title" [ngClass]="{ 'completed': todo.isCompleted }">
+        <label for="todo-checkbox-{{ todo._id }}" 
+               class="todo-title" 
+               [ngClass]="{ 'completed': todo.isCompleted }">
             {{ todo.title }}
         </label>
-        <span class="category">[{{ todo.category }}]</span>
+        <span class="category">{{ todo.category }}</span>
     </div>
-    <button (click)="onDelete()" aria-label="Delete todo">
+    <button class="delete-button" 
+            (click)="onDelete()" 
+            aria-label="Delete todo">
         &#x2715;
     </button>
 </div>
