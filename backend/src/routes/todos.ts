@@ -1,6 +1,12 @@
-import { Router, Request, Response, RequestHandler } from 'express';
+import { Router, Request, Response } from 'express';
 import Todo, { ITodo } from '../models/Todo';
 import mongoose from 'mongoose';
+
+// Custom types
+type AsyncRequestHandler<P = {}, ResBody = any, ReqBody = any> = (
+    req: Request<P, ResBody, ReqBody>,
+    res: Response<ResBody>
+) => Promise<void>;
 
 interface TodoBody {
     title?: string;
@@ -15,22 +21,23 @@ type TodoParams = {
 const router = Router();
 
 // GET all todos
-const getAllTodos: RequestHandler = async (_req, res) => {
+const getAllTodos: AsyncRequestHandler = async (_req, res) => {
     try {
         const todos: ITodo[] = await Todo.find();
-        return res.json(todos);
+        res.json(todos);
     } catch (err: any) {
-        return res.status(500).json({ message: err.message || 'Error fetching todos' });
+        res.status(500).json({ message: err.message || 'Error fetching todos' });
     }
 };
 
 // POST create a new todo
-const createTodo: RequestHandler<{}, any, TodoBody> = async (req, res) => {
+const createTodo: AsyncRequestHandler<{}, any, TodoBody> = async (req, res) => {
     const { title, isCompleted, category } = req.body;
 
     // Validate required fields
     if (!title || title.trim().length === 0) {
-        return res.status(400).json({ message: 'Title is required' });
+        res.status(400).json({ message: 'Title is required' });
+        return;
     }
 
     try {
@@ -41,37 +48,40 @@ const createTodo: RequestHandler<{}, any, TodoBody> = async (req, res) => {
         });
 
         const newTodo = await todo.save();
-        return res.status(201).json(newTodo);
+        res.status(201).json(newTodo);
     } catch (err: any) {
-        return res.status(500).json({ message: err.message || 'Error creating todo' });
+        res.status(500).json({ message: err.message || 'Error creating todo' });
     }
 };
 
 // DELETE a todo
-const deleteTodo: RequestHandler<TodoParams> = async (req, res) => {
+const deleteTodo: AsyncRequestHandler<TodoParams> = async (req, res) => {
     try {
         // Validate ObjectId
         if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-            return res.status(500).json({ message: 'Invalid todo ID' });
+            res.status(500).json({ message: 'Invalid todo ID' });
+            return;
         }
 
         const deletedTodo = await Todo.findByIdAndDelete(req.params.id);
         if (!deletedTodo) {
-            return res.status(404).json({ message: 'Todo not found' });
+            res.status(404).json({ message: 'Todo not found' });
+            return;
         }
 
-        return res.json({ message: 'Todo deleted' });
+        res.json({ message: 'Todo deleted' });
     } catch (err: any) {
-        return res.status(500).json({ message: err.message || 'Error deleting todo' });
+        res.status(500).json({ message: err.message || 'Error deleting todo' });
     }
 };
 
 // PATCH update a todo
-const updateTodo: RequestHandler<TodoParams, any, TodoBody> = async (req, res) => {
+const updateTodo: AsyncRequestHandler<TodoParams, any, TodoBody> = async (req, res) => {
     try {
         // Validate ObjectId
         if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-            return res.status(500).json({ message: 'Invalid todo ID' });
+            res.status(500).json({ message: 'Invalid todo ID' });
+            return;
         }
 
         const updatedTodo = await Todo.findByIdAndUpdate(
@@ -81,12 +91,13 @@ const updateTodo: RequestHandler<TodoParams, any, TodoBody> = async (req, res) =
         );
 
         if (!updatedTodo) {
-            return res.status(400).json({ message: 'Todo not found' });
+            res.status(400).json({ message: 'Todo not found' });
+            return;
         }
 
-        return res.json(updatedTodo);
+        res.json(updatedTodo);
     } catch (err: any) {
-        return res.status(500).json({ message: err.message || 'Error updating todo' });
+        res.status(500).json({ message: err.message || 'Error updating todo' });
     }
 };
 
