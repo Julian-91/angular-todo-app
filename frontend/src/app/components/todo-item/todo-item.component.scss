@@ -1,63 +1,152 @@
-$danger-color: #dc3545;
-$danger-hover: #a71d2a;
-$text-color: #333333;
-$completed-text-color: #999999;
-
+/* Variables */
+$primary-color: #3b82f6;
+$danger-color: #ef4444;
+$danger-hover: #dc2626;
+$text-primary: #1e293b;
+$text-secondary: #64748b;
+$completed-color: #9ca3af;
+$background-hover: #f8fafc;
+$transition-time: 0.2s;
 
 .todo-item {
     display: flex;
     align-items: center;
-    padding: 10px;
-
+    gap: 1rem;
+    padding: 1rem;
+    background-color: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    transition: all $transition-time;
+    
+    &:hover {
+        background-color: $background-hover;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
 }
 
-input[type='checkbox'] {
-    margin-right: 15px;
-    width: 18px;
-    height: 18px;
-}
-
-.todo-title {
-    flex: 1;
-    font-size: 18px;
-    color: $text-color;
-    margin-right: 20px;
-    word-break: break-word;
-    overflow-wrap: anywhere;
-
-    /* Increase this value to add more space */
-    &.completed {
-        text-decoration: line-through;
-        color: $completed-text-color;
+/* Custom checkbox styling */
+.checkbox-wrapper {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    
+    input[type='checkbox'] {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 20px;
+        height: 20px;
+        margin: 0;
+        opacity: 0;
+        z-index: 2;
+        cursor: pointer;
+    }
+    
+    .checkmark {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 20px;
+        height: 20px;
+        background-color: white;
+        border: 2px solid #e2e8f0;
+        border-radius: 4px;
+        transition: all $transition-time;
+        pointer-events: none;
+        z-index: 1;
+    }
+    
+    input[type='checkbox']:checked + .checkmark {
+        background-color: $primary-color;
+        border-color: $primary-color;
+    }
+    
+    input[type='checkbox']:checked + .checkmark:after {
+        content: '';
+        position: absolute;
+        left: 6px;
+        top: 2px;
+        width: 5px;
+        height: 10px;
+        border: solid white;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+    }
+    
+    input[type='checkbox']:focus + .checkmark {
+        box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
     }
 }
 
 .todo-content {
+    flex: 1;
     display: flex;
     align-items: center;
+    gap: 1rem;
+    min-width: 0; // Prevents flex item from overflowing
+}
+
+.todo-title {
     flex: 1;
+    font-size: 1rem;
+    color: $text-primary;
+    margin: 0;
+    transition: all $transition-time;
+    word-break: break-word;
+    min-width: 0; // Enables text truncation
+    cursor: pointer;
+    
+    &.completed {
+        color: $completed-color;
+        text-decoration: line-through;
+    }
 }
 
 .category {
-    flex: 1;
-    font-size: 18px;
-    color: $text-color;
-    margin-right: 20px;
+    font-size: 0.875rem;
+    color: $text-secondary;
+    background-color: #f1f5f9;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    white-space: nowrap;
 }
 
-button {
+.delete-button {
     background-color: transparent;
     border: none;
-    color: $danger-color;
-    font-size: 18px;
+    color: $text-secondary;
+    padding: 0.5rem;
     cursor: pointer;
-    transition: color 0.2s;
-    margin-left: auto;
-    /* Increase this value to add more space */
-    flex-shrink: 0;
-    /* Prevent the button from shrinking */
+    transition: all $transition-time;
+    border-radius: 0.375rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    &:hover {
+        color: $danger-color;
+        background-color: rgba($danger-color, 0.1);
+    }
+    
+    &:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba($danger-color, 0.1);
+    }
 }
 
-button:hover {
-    color: $danger-hover;
+/* Responsive design */
+@media (max-width: 640px) {
+    .todo-item {
+        padding: 0.75rem;
+    }
+    
+    .category {
+        display: none; // Hide category on mobile to save space
+    }
+    
+    .todo-title {
+        font-size: 0.875rem;
+    }
 }

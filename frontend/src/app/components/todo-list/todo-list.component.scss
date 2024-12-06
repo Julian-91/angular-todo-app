@@ -1,124 +1,182 @@
-/* Center the app and set a max width */
+/* Variables */
+$primary-color: #3b82f6;
+$primary-hover: #2563eb;
+$background-color: #f8fafc;
+$card-background: #ffffff;
+$text-primary: #1e293b;
+$text-secondary: #64748b;
+$border-color: #e2e8f0;
+$shadow-color: rgba(0, 0, 0, 0.1);
+$danger-color: #ef4444;
+$success-color: #22c55e;
+$transition-time: 0.2s;
+
+/* Main container */
 .todo-app {
-    max-width: 600px;
-    margin: 40px auto;
-    padding: 20px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #ffffff;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: $card-background;
+    box-shadow: 0 4px 6px -1px $shadow-color, 0 2px 4px -2px $shadow-color;
+    border-radius: 1rem;
+    font-family: system-ui, -apple-system, sans-serif;
 }
 
-/* Header styling */
+/* Header */
 .todo-app h1 {
     text-align: center;
-    color: #333333;
-    margin-bottom: 30px;
+    color: $text-primary;
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    letter-spacing: -0.025em;
 }
 
-/* Input field and button container */
+/* Input group */
 .input-group {
     display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    
+    input[type='text'] {
+        flex: 2;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        border: 2px solid $border-color;
+        border-radius: 0.5rem;
+        outline: none;
+        transition: border-color $transition-time;
+        
+        &:focus {
+            border-color: $primary-color;
+            box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+        }
+    }
+    
+    select {
+        flex: 1;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        border: 2px solid $border-color;
+        border-radius: 0.5rem;
+        outline: none;
+        cursor: pointer;
+        background-color: $card-background;
+        transition: border-color $transition-time;
+        
+        &:hover {
+            border-color: $primary-color;
+        }
+        
+        &:focus {
+            border-color: $primary-color;
+            box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+        }
+    }
+    
+    button {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 500;
+        color: white;
+        background-color: $primary-color;
+        border: none;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: background-color $transition-time, transform $transition-time;
+        
+        &:hover {
+            background-color: $primary-hover;
+            transform: translateY(-1px);
+        }
+        
+        &:active {
+            transform: translateY(0);
+        }
+    }
 }
 
-.input-group select {
-    flex: 1;
-    padding: 12px 15px;
-    font-size: 16px;
-    border: 2px solid #dddddd;
-    border-radius: 0 0 0 0;
-    outline: none;
-    transition: border-color 0.2s;
-    cursor: pointer;
-}
-
-/* Input field styling */
-.todo-app input[type='text'] {
-    flex: 1;
-    padding: 12px 15px;
-    font-size: 16px;
-    border: 2px solid #dddddd;
-    border-radius: 4px 0 0 4px;
-    outline: none;
-    transition: border-color 0.2s;
-}
-
-.todo-app input[type='text']:focus {
-    border-color: #007bff;
-}
-
-.todo-app select:hover {
-    border-color: #007bff;
-}
-
-.todo-app .category-filter select {
-    flex: 1;
-    padding: 12px 15px;
-    font-size: 16px;
-    border: 2px solid #dddddd;
-    border-radius: 4px 4px 4px 4px;
-    outline: none;
-    transition: border-color 0.2s;
-    cursor: pointer;
-}
-
-.todo-app .category-filter select:hover {
-    border-color: #007bff;
-}
-
+/* Category filter */
 .category-filter {
     display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background-color: $background-color;
+    border-radius: 0.5rem;
+    
+    label {
+        color: $text-secondary;
+        font-weight: 500;
+    }
+    
+    select {
+        flex: 1;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        border: 2px solid $border-color;
+        border-radius: 0.5rem;
+        outline: none;
+        cursor: pointer;
+        background-color: $card-background;
+        transition: all $transition-time;
+        
+        &:hover {
+            border-color: $primary-color;
+        }
+        
+        &:focus {
+            border-color: $primary-color;
+            box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+        }
+    }
 }
 
-.category-filter label {
-    padding: 12px 15px;
-    font-size: 16px;
-}
-
-/* Add button styling */
-.todo-app button {
-    padding: 12px 20px;
-    font-size: 16px;
-    background-color: #007bff;
-    color: #ffffff;
-    border: 2px solid #007bff;
-    border-radius: 0 4px 4px 0;
-    cursor: pointer;
-    transition: background-color 0.2s, border-color 0.2s;
-}
-
-.todo-app button:hover {
-    background-color: #0056b3;
-    border-color: #0056b3;
-}
-
-/* Todo list styling */
+/* Todo list */
 .todo-app ul {
     list-style: none;
     padding: 0;
-}
-
-/* Individual todo items */
-.todo-app li {
-    background-color: #f8f9fa;
-    padding: 15px;
-    margin-bottom: 10px;
-    border-radius: 4px;
+    margin: 0;
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    gap: 0.75rem;
 }
 
-/* Todo title styling */
-.todo-app li .todo-title {
-    flex: 1;
-    font-size: 18px;
-    color: #333333;
+/* Empty state */
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: $text-secondary;
+    background-color: $background-color;
+    border-radius: 0.5rem;
+    margin-top: 2rem;
+    
+    p {
+        font-size: 1.125rem;
+        margin-bottom: 1rem;
+    }
 }
 
-/* Hover effect on todo items */
-.todo-app li:hover {
-    background-color: #e9ecef;
+/* Responsive design */
+@media (max-width: 640px) {
+    .todo-app {
+        margin: 1rem;
+        padding: 1rem;
+    }
+    
+    .input-group {
+        flex-direction: column;
+        
+        input[type='text'],
+        select,
+        button {
+            width: 100%;
+        }
+    }
+    
+    .category-filter {
+        flex-direction: column;
+        align-items: stretch;
+    }
 }
