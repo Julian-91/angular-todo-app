@@ -1,11 +1,16 @@
 import request from 'supertest';
 import express from 'express';
 import todoRoutes from '../../routes/todos';
-import Todo from '../../models/Todo';
+import Todo, { ITodo } from '../../models/Todo';
 
 const app = express();
 app.use(express.json());
 app.use('/api/todos', todoRoutes);
+
+// Define response types
+interface TodoResponse extends ITodo {
+    _id: string;
+}
 
 describe('Todo Integration Tests', () => {
     it('should perform complete CRUD flow', async () => {
@@ -26,7 +31,8 @@ describe('Todo Integration Tests', () => {
             .get('/api/todos');
 
         expect(readResponse.status).toBe(200);
-        expect(readResponse.body.some(todo => todo._id === todoId)).toBe(true);
+        const todos = readResponse.body as TodoResponse[];
+        expect(todos.some(todo => todo._id === todoId)).toBe(true);
 
         // UPDATE
         const updateResponse = await request(app)
@@ -50,7 +56,8 @@ describe('Todo Integration Tests', () => {
         const verifyResponse = await request(app)
             .get('/api/todos');
 
-        expect(verifyResponse.body.some(todo => todo._id === todoId)).toBe(false);
+        const verifyTodos = verifyResponse.body as TodoResponse[];
+        expect(verifyTodos.some(todo => todo._id === todoId)).toBe(false);
     });
 
     it('should handle concurrent operations correctly', async () => {
@@ -91,5 +98,10 @@ describe('Todo Integration Tests', () => {
 
         const deleteResponses = await Promise.all(deletePromises);
         expect(deleteResponses.every(response => response.status === 200)).toBe(true);
+
+        // Clean up in case any tests failed
+        for (const id of todoIds) {
+            await Todo.findByIdAndDelete(id).catch(() => {});
+        }
     });
 });
