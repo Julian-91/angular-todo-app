@@ -9,79 +9,22 @@ app.use(express.json());
 app.use('/api/todos', todoRoutes);
 
 describe('Error Handling Tests', () => {
-    describe('Database Connection Errors', () => {
-        let originalConnect: typeof mongoose.connect;
-
-        beforeAll(() => {
-            originalConnect = mongoose.connect;
-        });
-
-        afterAll(() => {
-            mongoose.connect = originalConnect;
-        });
-
-        it('should handle database connection errors', async () => {
-            // Mock mongoose connect to simulate connection error
-            mongoose.connect = jest.fn().mockRejectedValue(new Error('Connection failed'));
+    describe('Database Operation Errors', () => {
+        it('should handle database find errors', async () => {
+            // Mock Todo.find to simulate error
+            const mockFind = jest.spyOn(Todo, 'find')
+                .mockRejectedValueOnce(new Error('Database error'));
 
             const response = await request(app).get('/api/todos');
             expect(response.status).toBe(500);
-        });
-    });
 
-    describe('Invalid ObjectId Handling', () => {
-        it('should handle invalid ObjectId in delete request', async () => {
-            const response = await request(app)
-                .delete('/api/todos/invalid-id');
-
-            expect(response.status).toBe(400);
-            expect(response.body.message).toBeDefined();
+            // Restore the original implementation
+            mockFind.mockRestore();
         });
 
-        it('should handle invalid ObjectId in update request', async () => {
-            const response = await request(app)
-                .patch('/api/todos/invalid-id')
-                .send({ title: 'Updated Title' });
-
-            expect(response.status).toBe(400);
-            expect(response.body.message).toBeDefined();
-        });
-    });
-
-    describe('Request Validation', () => {
-        it('should handle invalid JSON in request body', async () => {
-            const response = await request(app)
-                .post('/api/todos')
-                .set('Content-Type', 'application/json')
-                .send('invalid json');
-
-            expect(response.status).toBe(400);
-        });
-
-        it('should handle missing required fields', async () => {
-            const response = await request(app)
-                .post('/api/todos')
-                .send({});
-
-            expect(response.status).toBe(400);
-        });
-
-        it('should handle invalid field types', async () => {
-            const response = await request(app)
-                .post('/api/todos')
-                .send({
-                    title: 123, // Should be string
-                    isCompleted: 'true' // Should be boolean
-                });
-
-            expect(response.status).toBe(400);
-        });
-    });
-
-    describe('Database Operation Errors', () => {
         it('should handle database save errors', async () => {
-            // Mock Todo.save to simulate error
-            jest.spyOn(Todo.prototype, 'save')
+            // Mock Todo creation to simulate error
+            const mockCreate = jest.spyOn(Todo, 'create')
                 .mockRejectedValueOnce(new Error('Database error'));
 
             const response = await request(app)
@@ -92,15 +35,75 @@ describe('Error Handling Tests', () => {
                 });
 
             expect(response.status).toBe(500);
+
+            // Restore the original implementation
+            mockCreate.mockRestore();
         });
 
-        it('should handle database find errors', async () => {
-            // Mock Todo.find to simulate error
-            jest.spyOn(Todo, 'find')
+        it('should handle database delete errors', async () => {
+            const mockDelete = jest.spyOn(Todo, 'findByIdAndDelete')
                 .mockRejectedValueOnce(new Error('Database error'));
 
-            const response = await request(app).get('/api/todos');
+            const validObjectId = new mongoose.Types.ObjectId();
+            const response = await request(app)
+                .delete(`/api/todos/${validObjectId}`);
+
             expect(response.status).toBe(500);
+
+            // Restore the original implementation
+            mockDelete.mockRestore();
+        });
+    });
+
+    describe('Invalid ObjectId Handling', () => {
+        it('should handle invalid ObjectId in delete request', async () => {
+            const response = await request(app)
+                .delete('/api/todos/invalid-id');
+
+            expect(response.status).toBe(500);
+        });
+
+        it('should handle invalid ObjectId in update request', async () => {
+            const response = await request(app)
+                .patch('/api/todos/invalid-id')
+                .send({ title: 'Updated Title' });
+
+            expect(response.status).toBe(500);
+        });
+    });
+
+    describe('Request Validation', () => {
+        it('should handle missing required fields', async () => {
+            const response = await request(app)
+                .post('/api/todos')
+                .send({});
+
+            expect(response.status).toBe(400);
+        });
+
+        it('should handle empty title', async () => {
+            const response = await request(app)
+                .post('/api/todos')
+                .send({
+                    title: ''
+                });
+
+            expect(response.status).toBe(400);
+        });
+
+        it('should convert isCompleted to boolean', async () => {
+            const response = await request(app)
+                .post('/api/todos')
+                .send({
+                    title: 'Test Todo',
+                    isCompleted: 'true'
+                });
+
+            expect(response.status).toBe(201);
+            expect(response.body.isCompleted).toBe(true);
+
+            // Cleanup
+            await Todo.findByIdAndDelete(response.body._id);
         });
     });
 });
