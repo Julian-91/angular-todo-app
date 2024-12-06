@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, RequestHandler } from 'express';
 import Todo, { ITodo } from '../models/Todo';
 import mongoose from 'mongoose';
 
@@ -8,24 +8,24 @@ interface TodoBody {
     category?: string;
 }
 
-interface TodoParams {
+type TodoParams = {
     id: string;
 }
 
 const router = Router();
 
 // GET all todos
-router.get('/', async (_req: Request, res: Response) => {
+const getAllTodos: RequestHandler = async (_req, res) => {
     try {
         const todos: ITodo[] = await Todo.find();
         res.json(todos);
     } catch (err: any) {
         res.status(500).json({ message: err.message || 'Error fetching todos' });
     }
-});
+};
 
 // POST create a new todo
-router.post('/', async (req: Request<{}, {}, TodoBody>, res: Response) => {
+const createTodo: RequestHandler<{}, any, TodoBody> = async (req, res) => {
     const { title, isCompleted, category } = req.body;
 
     // Validate required fields
@@ -45,10 +45,10 @@ router.post('/', async (req: Request<{}, {}, TodoBody>, res: Response) => {
     } catch (err: any) {
         res.status(500).json({ message: err.message || 'Error creating todo' });
     }
-});
+};
 
 // DELETE a todo
-router.delete('/:id', async (req: Request<TodoParams>, res: Response) => {
+const deleteTodo: RequestHandler<TodoParams> = async (req, res) => {
     try {
         // Validate ObjectId
         if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
@@ -64,10 +64,10 @@ router.delete('/:id', async (req: Request<TodoParams>, res: Response) => {
     } catch (err: any) {
         res.status(500).json({ message: err.message || 'Error deleting todo' });
     }
-});
+};
 
 // PATCH update a todo
-router.patch('/:id', async (req: Request<TodoParams, {}, TodoBody>, res: Response) => {
+const updateTodo: RequestHandler<TodoParams, any, TodoBody> = async (req, res) => {
     try {
         // Validate ObjectId
         if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
@@ -88,6 +88,12 @@ router.patch('/:id', async (req: Request<TodoParams, {}, TodoBody>, res: Respons
     } catch (err: any) {
         res.status(500).json({ message: err.message || 'Error updating todo' });
     }
-});
+};
+
+// Route handlers
+router.get('/', getAllTodos);
+router.post('/', createTodo);
+router.delete('/:id', deleteTodo);
+router.patch('/:id', updateTodo);
 
 export default router;
