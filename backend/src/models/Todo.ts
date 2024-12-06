@@ -9,7 +9,11 @@ export interface ITodo extends Document {
 const TodoSchema = new Schema<ITodo>({
     title: { type: String, required: true },
     isCompleted: { type: Boolean, default: false },
-    category: { type: String, default: 'General' },
+    category: { 
+        type: String, 
+        default: 'General',
+        set: (value: string) => value?.trim() || 'General'
+    },
 });
 
 export default model<ITodo>('Todo', TodoSchema);
