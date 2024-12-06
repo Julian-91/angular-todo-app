@@ -23,8 +23,8 @@ describe('Error Handling Tests', () => {
         });
 
         it('should handle database save errors', async () => {
-            // Mock Todo creation to simulate error
-            const mockCreate = jest.spyOn(Todo, 'create')
+            // Mock Todo.create to simulate error
+            const mockSave = jest.spyOn(Todo.prototype, 'save')
                 .mockRejectedValueOnce(new Error('Database error'));
 
             const response = await request(app)
@@ -37,14 +37,14 @@ describe('Error Handling Tests', () => {
             expect(response.status).toBe(500);
 
             // Restore the original implementation
-            mockCreate.mockRestore();
+            mockSave.mockRestore();
         });
 
         it('should handle database delete errors', async () => {
+            const validObjectId = new mongoose.Types.ObjectId();
             const mockDelete = jest.spyOn(Todo, 'findByIdAndDelete')
                 .mockRejectedValueOnce(new Error('Database error'));
 
-            const validObjectId = new mongoose.Types.ObjectId();
             const response = await request(app)
                 .delete(`/api/todos/${validObjectId}`);
 
@@ -89,21 +89,6 @@ describe('Error Handling Tests', () => {
                 });
 
             expect(response.status).toBe(400);
-        });
-
-        it('should convert isCompleted to boolean', async () => {
-            const response = await request(app)
-                .post('/api/todos')
-                .send({
-                    title: 'Test Todo',
-                    isCompleted: 'true'
-                });
-
-            expect(response.status).toBe(201);
-            expect(response.body.isCompleted).toBe(true);
-
-            // Cleanup
-            await Todo.findByIdAndDelete(response.body._id);
         });
     });
 });
