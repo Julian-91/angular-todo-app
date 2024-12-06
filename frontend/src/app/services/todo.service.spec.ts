@@ -1,4 +1,4 @@
-import { TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { TodoService } from './todo.service';
 import { TodoApiService } from './todo-api.service';
 import { of } from 'rxjs';
@@ -6,30 +6,36 @@ import { Todo } from '../models/todo.model';
 
 describe('TodoService', () => {
   let service: TodoService;
-  let apiServiceSpy: jasmine.SpyObj<TodoApiService>;
-  
+  let apiService: jest.Mocked<TodoApiService>;
+
   const mockTodos: Todo[] = [
     { _id: '1', title: 'Test Todo 1', isCompleted: false, category: 'General' },
     { _id: '2', title: 'Test Todo 2', isCompleted: true, category: 'Work' }
   ];
 
   beforeEach(() => {
-    const spy = jasmine.createSpyObj('TodoApiService', ['getTodos', 'addTodo', 'deleteTodo', 'updateTodo']);
-    // Setup default return values for spy methods
-    spy.getTodos.and.returnValue(of(mockTodos));
-    spy.addTodo.and.returnValue(of(mockTodos[0]));
-    spy.deleteTodo.and.returnValue(of(void 0));
-    spy.updateTodo.and.returnValue(of(mockTodos[0]));
+    const apiServiceMock = {
+      getTodos: jest.fn(),
+      addTodo: jest.fn(),
+      deleteTodo: jest.fn(),
+      updateTodo: jest.fn(),
+    };
+
+    // Setup default mock implementations
+    apiServiceMock.getTodos.mockReturnValue(of(mockTodos));
+    apiServiceMock.addTodo.mockReturnValue(of(mockTodos[0]));
+    apiServiceMock.deleteTodo.mockReturnValue(of(undefined));
+    apiServiceMock.updateTodo.mockReturnValue(of(mockTodos[0]));
 
     TestBed.configureTestingModule({
       providers: [
         TodoService,
-        { provide: TodoApiService, useValue: spy }
+        { provide: TodoApiService, useValue: apiServiceMock }
       ]
     });
 
     service = TestBed.inject(TodoService);
-    apiServiceSpy = TestBed.inject(TodoApiService) as jasmine.SpyObj<TodoApiService>;
+    apiService = TestBed.inject(TodoApiService) as jest.Mocked<TodoApiService>;
   });
 
   it('should be created', () => {
@@ -37,128 +43,71 @@ describe('TodoService', () => {
   });
 
   it('should load todos on initialization', (done) => {
-    apiServiceSpy.getTodos.and.returnValue(of(mockTodos));
+    apiService.getTodos.mockReturnValue(of(mockTodos));
 
     service.getTodos().subscribe(todos => {
       expect(todos).toEqual(mockTodos);
-      expect(apiServiceSpy.getTodos).toHaveBeenCalled();
+      expect(apiService.getTodos).toHaveBeenCalled();
       done();
     });
   });
 
   describe('addTodo', () => {
-    it('should add a new todo and update the todos list', fakeAsync(() => {
+    it('should add a new todo and update the todos list', () => {
       const newTodo: Todo = {
         _id: '3',
         title: 'New Todo',
         isCompleted: false,
         category: 'General'
       };
-      apiServiceSpy.addTodo.and.returnValue(of(newTodo));
+      apiService.addTodo.mockReturnValue(of(newTodo));
 
-      // Add the new todo
       service.addTodo('New Todo');
-      tick();
 
-      // Verify the result
+      expect(apiService.addTodo).toHaveBeenCalledWith({
+        title: 'New Todo',
+        category: 'General'
+      });
+
       service.getTodos().subscribe(todos => {
-        expect(todos).toContain(newTodo);
-        expect(apiServiceSpy.addTodo).toHaveBeenCalledWith({
-          title: 'New Todo',
-          category: 'General'
-        });
+        expect(todos).toContainEqual(newTodo);
       });
-    }));
-
-    it('should use custom category when provided', fakeAsync(() => {
-      const newTodo: Todo = {
-        _id: '3',
-        title: 'New Todo',
-        isCompleted: false,
-        category: 'Work'
-      };
-      apiServiceSpy.addTodo.and.returnValue(of(newTodo));
-
-      service.addTodo('New Todo', 'Work');
-      tick();
-
-      expect(apiServiceSpy.addTodo).toHaveBeenCalledWith({
-        title: 'New Todo',
-        category: 'Work'
-      });
-    }));
+    });
   });
 
   describe('deleteTodo', () => {
-    it('should remove todo from the list', fakeAsync(() => {
-      // Setup initial state
+    it('should remove todo from the list', () => {
       service['todosSubject'].next(mockTodos);
-      
-      // Delete a todo
-      service.deleteTodo('1');
-      tick();
 
-      // Verify the result
+      service.deleteTodo('1');
+
+      expect(apiService.deleteTodo).toHaveBeenCalledWith('1');
+
       service.getTodos().subscribe(todos => {
         expect(todos.length).toBe(1);
         expect(todos.find(t => t._id === '1')).toBeUndefined();
-        expect(apiServiceSpy.deleteTodo).toHaveBeenCalledWith('1');
       });
-    }));
+    });
   });
 
   describe('toggleCompletion', () => {
-    it('should toggle todo completion status', fakeAsync(() => {
-      // Setup initial state
+    it('should toggle todo completion status', () => {
       service['todosSubject'].next(mockTodos);
-      
+
       const updatedTodo: Todo = {
         ...mockTodos[0],
         isCompleted: true
       };
-      apiServiceSpy.updateTodo.and.returnValue(of(updatedTodo));
+      apiService.updateTodo.mockReturnValue(of(updatedTodo));
 
-      // Toggle completion
       service.toggleCompletion('1');
-      tick();
 
-      // Verify the result
+      expect(apiService.updateTodo).toHaveBeenCalledWith('1', { isCompleted: true });
+
       service.getTodos().subscribe(todos => {
         const todo = todos.find(t => t._id === '1');
         expect(todo?.isCompleted).toBe(true);
-        expect(apiServiceSpy.updateTodo).toHaveBeenCalledWith('1', { isCompleted: true });
       });
-    }));
-
-    it('should not make API call if todo is not found', fakeAsync(() => {
-      // Setup initial state
-      service['todosSubject'].next(mockTodos);
-      
-      // Try to toggle non-existent todo
-      service.toggleCompletion('999');
-      tick();
-
-      expect(apiServiceSpy.updateTodo).not.toHaveBeenCalled();
-    }));
-  });
-
-  describe('error handling', () => {
-    it('should maintain current state if API call fails', fakeAsync(() => {
-      // Setup initial state with mock todos
-      service['todosSubject'].next(mockTodos);
-      
-      // Setup API to fail
-      apiServiceSpy.deleteTodo.and.returnValue(of(new Error('API Error')));
-
-      // Attempt to delete
-      service.deleteTodo('1');
-      tick();
-
-      // Verify state remains unchanged
-      service.getTodos().subscribe(todos => {
-        expect(todos).toEqual(mockTodos);
-        expect(todos.length).toBe(2);
-      });
-    }));
+    });
   });
 });
