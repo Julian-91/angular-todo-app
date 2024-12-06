@@ -7,9 +7,9 @@
     "build": "ng build",
     "build-production": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
+    "test": "jest --config=jest.config.js",
+    "test:watch": "jest --watch --config=jest.config.js",
+    "test:coverage": "jest --coverage --config=jest.config.js",
     "storybook": "ng run angular-todo-app:storybook",
     "build-storybook": "ng run angular-todo-app:build-storybook"
   },

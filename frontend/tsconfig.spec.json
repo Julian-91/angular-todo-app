@@ -1,1 +1,16 @@
-ewogICJleHRlbmRzIjogIi4vdHNjb25maWcuanNvbiIsCiAgImNvbXBpbGVyT3B0aW9ucyI6IHsKICAgICJvdXREaXIiOiAiLi9kaXN0L291dC10c2MtbCIsCiAgICAibW9kdWxlIjogIkNvbW1vbkpTIiwKICAgICJ0eXBlcyI6IFsKICAgICAgImplc3QiLAogICAgICAibm9kZSIKICAgIF0KICB9LAogICJpbmNsdWRlIjogWwogICAgInNyYy8qKi8qLnNwZWMudHMiLAogICAgInNyYy8qKi8qLnRlc3QudHMiLAogICAgInNyYy8qKi8qLmQudHMiCiAgXQp9Cg==
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "outDir": "./dist/out-tsc-spec",
+        "module": "CommonJS",
+        "types": [
+            "jest",
+            "node"
+        ]
+    },
+    "include": [
+        "src/**/*.spec.ts",
+        "src/**/*.test.ts",
+        "src/**/*.d.ts"
+    ]
+}
