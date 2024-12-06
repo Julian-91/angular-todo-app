@@ -1,6 +1,12 @@
 import mongoose from 'mongoose';
 import Todo, { ITodo } from '../Todo';
 
+interface MongooseError extends Error {
+  errors: {
+    [key: string]: mongoose.Error.ValidatorError;
+  };
+}
+
 describe('Todo Model Test', () => {
   describe('Validation Tests', () => {
     it('should validate a valid todo', async () => {
@@ -35,16 +41,16 @@ describe('Todo Model Test', () => {
         category: 'Work'
       };
       
-      let err;
+      let err: MongooseError | null = null;
       try {
         const todo = new Todo(todoWithoutTitle);
         await todo.save();
       } catch (error) {
-        err = error;
+        err = error as MongooseError;
       }
       
       expect(err).toBeInstanceOf(mongoose.Error.ValidationError);
-      expect(err.errors.title).toBeDefined();
+      expect(err?.errors.title).toBeDefined();
     });
 
     it('should fail validation when title is null', async () => {
@@ -54,16 +60,16 @@ describe('Todo Model Test', () => {
         category: 'Work'
       };
       
-      let err;
+      let err: MongooseError | null = null;
       try {
         const todo = new Todo(todoWithNullTitle);
         await todo.save();
       } catch (error) {
-        err = error;
+        err = error as MongooseError;
       }
       
       expect(err).toBeInstanceOf(mongoose.Error.ValidationError);
-      expect(err.errors.title).toBeDefined();
+      expect(err?.errors.title).toBeDefined();
     });
 
     it('should convert string boolean values for isCompleted', async () => {
