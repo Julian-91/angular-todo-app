@@ -11,9 +11,18 @@ module.exports = {
     'src/**/*.{js,ts}',
     '!src/**/*.d.ts',
     '!src/server.ts',
+    '!src/test/**/*.{js,ts}',
   ],
   coverageDirectory: 'coverage',
-  coverageReporters: ['text', 'lcov'],
+  coverageReporters: ['text', 'lcov', 'html'],
+  coverageThreshold: {
+    global: {
+      branches: 80,
+      functions: 80,
+      lines: 80,
+      statements: 80
+    }
+  },
   verbose: true,
   testPathIgnorePatterns: ['/node_modules/', '/dist/'],
   setupFilesAfterEnv: ['<rootDir>/src/test/setup.ts']
