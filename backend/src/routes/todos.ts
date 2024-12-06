@@ -18,9 +18,9 @@ const router = Router();
 const getAllTodos: RequestHandler = async (_req, res) => {
     try {
         const todos: ITodo[] = await Todo.find();
-        res.json(todos);
+        return res.json(todos);
     } catch (err: any) {
-        res.status(500).json({ message: err.message || 'Error fetching todos' });
+        return res.status(500).json({ message: err.message || 'Error fetching todos' });
     }
 };
 
@@ -41,9 +41,9 @@ const createTodo: RequestHandler<{}, any, TodoBody> = async (req, res) => {
         });
 
         const newTodo = await todo.save();
-        res.status(201).json(newTodo);
+        return res.status(201).json(newTodo);
     } catch (err: any) {
-        res.status(500).json({ message: err.message || 'Error creating todo' });
+        return res.status(500).json({ message: err.message || 'Error creating todo' });
     }
 };
 
@@ -60,9 +60,9 @@ const deleteTodo: RequestHandler<TodoParams> = async (req, res) => {
             return res.status(404).json({ message: 'Todo not found' });
         }
 
-        res.json({ message: 'Todo deleted' });
+        return res.json({ message: 'Todo deleted' });
     } catch (err: any) {
-        res.status(500).json({ message: err.message || 'Error deleting todo' });
+        return res.status(500).json({ message: err.message || 'Error deleting todo' });
     }
 };
 
@@ -84,9 +84,9 @@ const updateTodo: RequestHandler<TodoParams, any, TodoBody> = async (req, res) =
             return res.status(400).json({ message: 'Todo not found' });
         }
 
-        res.json(updatedTodo);
+        return res.json(updatedTodo);
     } catch (err: any) {
-        res.status(500).json({ message: err.message || 'Error updating todo' });
+        return res.status(500).json({ message: err.message || 'Error updating todo' });
     }
 };
 
