@@ -2,10 +2,20 @@ import { Router, Request, Response } from 'express';
 import Todo, { ITodo } from '../models/Todo';
 import mongoose from 'mongoose';
 
+interface TodoBody {
+    title?: string;
+    isCompleted?: boolean;
+    category?: string;
+}
+
+interface TodoParams {
+    id: string;
+}
+
 const router = Router();
 
 // GET all todos
-router.get('/', async (req: Request, res: Response) => {
+router.get('/', async (_req: Request, res: Response) => {
     try {
         const todos: ITodo[] = await Todo.find();
         res.json(todos);
@@ -15,7 +25,7 @@ router.get('/', async (req: Request, res: Response) => {
 });
 
 // POST create a new todo
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', async (req: Request<{}, {}, TodoBody>, res: Response) => {
     const { title, isCompleted, category } = req.body;
 
     // Validate required fields
@@ -38,7 +48,7 @@ router.post('/', async (req: Request, res: Response) => {
 });
 
 // DELETE a todo
-router.delete('/:id', async (req: Request, res: Response) => {
+router.delete('/:id', async (req: Request<TodoParams>, res: Response) => {
     try {
         // Validate ObjectId
         if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
@@ -57,7 +67,7 @@ router.delete('/:id', async (req: Request, res: Response) => {
 });
 
 // PATCH update a todo
-router.patch('/:id', async (req: Request, res: Response) => {
+router.patch('/:id', async (req: Request<TodoParams, {}, TodoBody>, res: Response) => {
     try {
         // Validate ObjectId
         if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
