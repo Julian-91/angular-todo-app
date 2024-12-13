@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { TodoItemComponent } from './todo-item.component';
 import { Todo } from '../../models/todo.model';
 import { By } from '@angular/platform-browser';
@@ -60,11 +60,9 @@ describe('TodoItemComponent', () => {
   });
 
   it('should reflect completed status in UI', () => {
-    // Initially not completed
     let titleElement = fixture.debugElement.query(By.css('.todo-title'));
     expect(titleElement.nativeElement.classList.contains('completed')).toBeFalsy();
 
-    // Change to completed
     component.todo = { ...mockTodo, isCompleted: true };
     fixture.detectChanges();
 
@@ -73,11 +71,9 @@ describe('TodoItemComponent', () => {
   });
 
   it('should check checkbox when todo is completed', () => {
-    // Initially not completed
     let checkbox = fixture.debugElement.query(By.css('input[type="checkbox"]'));
     expect(checkbox.nativeElement.checked).toBeFalsy();
 
-    // Change to completed
     component.todo = { ...mockTodo, isCompleted: true };
     fixture.detectChanges();
 
@@ -94,7 +90,7 @@ describe('TodoItemComponent', () => {
   });
 
   describe('Edit Mode', () => {
-    it('should enter edit mode when edit button is clicked', () => {
+    it('should enter edit mode when edit button is clicked', fakeAsync(() => {
       const editButton = fixture.debugElement.query(By.css('.edit-button'));
       editButton.nativeElement.click();
       fixture.detectChanges();
@@ -102,29 +98,32 @@ describe('TodoItemComponent', () => {
       const editForm = fixture.debugElement.query(By.css('.edit-form'));
       expect(editForm).toBeTruthy();
       expect(component.isEditing).toBe(true);
-    });
+    }));
 
-    it('should populate edit form with current todo data', () => {
-      // First trigger edit mode
+    it('should populate edit form with current todo data', fakeAsync(() => {
+      // Enter edit mode
       const editButton = fixture.debugElement.query(By.css('.edit-button'));
       editButton.nativeElement.click();
       fixture.detectChanges();
+      tick();
 
-      // Now check the form values
+      // Get form elements
       const titleInput = fixture.debugElement.query(By.css('.edit-title'));
       const categorySelect = fixture.debugElement.query(By.css('.edit-category'));
-
-      // Trigger another change detection cycle
+      
+      // Force NgModel to update
       fixture.detectChanges();
+      tick();
 
       expect(titleInput.nativeElement.value).toBe(mockTodo.title);
       expect(categorySelect.nativeElement.value).toBe(mockTodo.category);
-    });
+    }));
 
-    it('should include all unique categories in dropdown', () => {
+    it('should include all unique categories in dropdown', fakeAsync(() => {
       const editButton = fixture.debugElement.query(By.css('.edit-button'));
       editButton.nativeElement.click();
       fixture.detectChanges();
+      tick();
 
       const options = fixture.debugElement.queryAll(By.css('.edit-category option'));
       const categories = options.map(option => option.nativeElement.value);
@@ -134,20 +133,22 @@ describe('TodoItemComponent', () => {
       expect(categories).toContain('Category 2');
       expect(categories).toContain(mockTodo.category);
       expect(new Set(categories).size).toBe(categories.length); // No duplicates
-    });
+    }));
 
-    it('should emit update event with new values when save button is clicked', () => {
+    it('should emit update event with new values when save button is clicked', fakeAsync(() => {
       const updateSpy = jest.spyOn(component.update, 'emit');
       
       // Enter edit mode
       const editButton = fixture.debugElement.query(By.css('.edit-button'));
       editButton.nativeElement.click();
       fixture.detectChanges();
+      tick();
 
       // Update values
       component.editedTitle = 'Updated Title';
       component.editedCategory = 'Category 1';
       fixture.detectChanges();
+      tick();
 
       const saveButton = fixture.debugElement.query(By.css('.save-button'));
       saveButton.nativeElement.click();
@@ -160,35 +161,39 @@ describe('TodoItemComponent', () => {
         }
       });
       expect(component.isEditing).toBe(false);
-    });
+    }));
 
-    it('should not emit update event if title is empty', () => {
+    it('should not emit update event if title is empty', fakeAsync(() => {
       const updateSpy = jest.spyOn(component.update, 'emit');
       
       // Enter edit mode
       const editButton = fixture.debugElement.query(By.css('.edit-button'));
       editButton.nativeElement.click();
       fixture.detectChanges();
+      tick();
 
       component.editedTitle = '   ';
       fixture.detectChanges();
+      tick();
 
       const saveButton = fixture.debugElement.query(By.css('.save-button'));
       saveButton.nativeElement.click();
 
       expect(updateSpy).not.toHaveBeenCalled();
       expect(component.isEditing).toBe(true);
-    });
+    }));
 
-    it('should exit edit mode and revert changes when cancel button is clicked', () => {
+    it('should exit edit mode and revert changes when cancel button is clicked', fakeAsync(() => {
       // Enter edit mode
       const editButton = fixture.debugElement.query(By.css('.edit-button'));
       editButton.nativeElement.click();
       fixture.detectChanges();
+      tick();
 
       component.editedTitle = 'Changed Title';
       component.editedCategory = 'Changed Category';
       fixture.detectChanges();
+      tick();
 
       const cancelButton = fixture.debugElement.query(By.css('.cancel-button'));
       cancelButton.nativeElement.click();
@@ -196,18 +201,20 @@ describe('TodoItemComponent', () => {
       expect(component.isEditing).toBe(false);
       expect(component.editedTitle).toBe(mockTodo.title);
       expect(component.editedCategory).toBe(mockTodo.category);
-    });
+    }));
 
-    it('should handle Enter key to save changes', () => {
+    it('should handle Enter key to save changes', fakeAsync(() => {
       const updateSpy = jest.spyOn(component.update, 'emit');
       
       // Enter edit mode
       const editButton = fixture.debugElement.query(By.css('.edit-button'));
       editButton.nativeElement.click();
       fixture.detectChanges();
+      tick();
 
       component.editedTitle = 'Updated Title';
       fixture.detectChanges();
+      tick();
 
       const titleInput = fixture.debugElement.query(By.css('.edit-title'));
       const event = new KeyboardEvent('keydown', { key: 'Enter' });
@@ -215,16 +222,18 @@ describe('TodoItemComponent', () => {
 
       expect(updateSpy).toHaveBeenCalled();
       expect(component.isEditing).toBe(false);
-    });
+    }));
 
-    it('should handle Escape key to cancel editing', () => {
+    it('should handle Escape key to cancel editing', fakeAsync(() => {
       // Enter edit mode
       const editButton = fixture.debugElement.query(By.css('.edit-button'));
       editButton.nativeElement.click();
       fixture.detectChanges();
+      tick();
 
       component.editedTitle = 'Changed Title';
       fixture.detectChanges();
+      tick();
 
       const titleInput = fixture.debugElement.query(By.css('.edit-title'));
       const event = new KeyboardEvent('keydown', { key: 'Escape' });
@@ -232,6 +241,6 @@ describe('TodoItemComponent', () => {
 
       expect(component.isEditing).toBe(false);
       expect(component.editedTitle).toBe(mockTodo.title);
-    });
+    }));
   });
 });
