@@ -21,6 +21,12 @@ export class TodoItemComponent {
   editedTitle = '';
   editedCategory = '';
 
+  get uniqueCategories(): string[] {
+    // Combine current todo category with available categories and remove duplicates
+    const allCategories = ['General', ...this.availableCategories, this.todo.category];
+    return [...new Set(allCategories)];
+  }
+
   onDelete(): void {
     this.delete.emit(this.todo._id);
   }
