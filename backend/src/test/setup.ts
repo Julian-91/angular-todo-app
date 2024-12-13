@@ -5,7 +5,9 @@ let mongoServer: MongoMemoryServer;
 
 beforeAll(async () => {
     // Close any existing connections
-    await mongoose.disconnect();
+    if (mongoose.connection.readyState !== 0) {
+        await mongoose.disconnect();
+    }
     
     mongoServer = await MongoMemoryServer.create();
     const mongoUri = mongoServer.getUri();
@@ -13,14 +15,18 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-    await mongoose.disconnect();
+    if (mongoose.connection.readyState !== 0) {
+        await mongoose.disconnect();
+    }
     await mongoServer.stop();
 });
 
 beforeEach(async () => {
-    // Clear all collections before each test
-    const collections = await mongoose.connection.db.collections();
-    for (const collection of collections) {
-        await collection.deleteMany({});
+    // Only try to clear collections if we have an active connection
+    if (mongoose.connection.readyState === 1) { // 1 = connected
+        const collections = mongoose.connection.collections;
+        for (const key in collections) {
+            await collections[key].deleteMany({});
+        }
     }
 });
