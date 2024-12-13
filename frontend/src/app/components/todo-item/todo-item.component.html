@@ -17,12 +17,12 @@
             <span class="category">{{ todo.category }}</span>
         </div>
         <div class="actions">
-            <button class="edit-button" 
+            <button class="action-button edit-button"
                     (click)="startEditing()" 
                     aria-label="Edit todo">
                 ✎
             </button>
-            <button class="delete-button" 
+            <button class="action-button delete-button"
                     (click)="onDelete()" 
                     aria-label="Delete todo">
                 &#x2715;
@@ -32,6 +32,11 @@
 
     <!-- Edit Mode -->
     <ng-container *ngIf="isEditing">
+        <div class="checkbox-wrapper">
+            <input type="checkbox" disabled
+                   [checked]="todo.isCompleted" />
+            <span class="checkmark"></span>
+        </div>
         <div class="edit-form">
             <input type="text"
                    class="edit-title"
@@ -40,7 +45,7 @@
                    placeholder="Todo title"
                    #titleInput>
             
-            <select [(ngModel)]="editedCategory" class="edit-category">
+            <select class="edit-category" [(ngModel)]="editedCategory">
                 <option value="General">General</option>
                 <option *ngFor="let category of availableCategories" 
                         [value]="category">
@@ -49,13 +54,13 @@
             </select>
 
             <div class="edit-actions">
-                <button class="save-button" 
+                <button class="action-button save-button"
                         (click)="saveEdits()" 
                         [disabled]="!editedTitle.trim()"
                         aria-label="Save changes">
                     ✓
                 </button>
-                <button class="cancel-button" 
+                <button class="action-button cancel-button"
                         (click)="cancelEditing()" 
                         aria-label="Cancel editing">
                     ✕
