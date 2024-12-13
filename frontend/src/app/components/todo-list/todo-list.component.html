@@ -1,6 +1,6 @@
-<div class="todo-list-container">
+<div class="todo-app">
     <!-- Add Todo Form -->
-    <div class="add-todo-form">
+    <div class="input-group">
         <input type="text"
                [(ngModel)]="newTodoTitle"
                placeholder="Add a new todo"
@@ -34,5 +34,11 @@
                        (toggle)="toggleCompletion($event)"
                        (update)="updateTodo($event)">
         </app-todo-item>
+
+        <!-- Empty State -->
+        <div class="empty-state" *ngIf="filteredTodos.length === 0">
+            <p>No todos found</p>
+            <p *ngIf="selectedCategory !== 'All'">Try changing the category filter</p>
+        </div>
     </div>
 </div>
