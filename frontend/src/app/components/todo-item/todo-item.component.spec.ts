@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TodoItemComponent } from './todo-item.component';
 import { Todo } from '../../models/todo.model';
 import { By } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
 
 describe('TodoItemComponent', () => {
   let component: TodoItemComponent;
@@ -16,7 +17,7 @@ describe('TodoItemComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TodoItemComponent]
+      imports: [TodoItemComponent, FormsModule]
     }).compileComponents();
 
     fixture = TestBed.createComponent(TodoItemComponent);
@@ -104,18 +105,25 @@ describe('TodoItemComponent', () => {
     });
 
     it('should populate edit form with current todo data', () => {
-      component.startEditing();
+      // First trigger edit mode
+      const editButton = fixture.debugElement.query(By.css('.edit-button'));
+      editButton.nativeElement.click();
       fixture.detectChanges();
 
+      // Now check the form values
       const titleInput = fixture.debugElement.query(By.css('.edit-title'));
       const categorySelect = fixture.debugElement.query(By.css('.edit-category'));
+
+      // Trigger another change detection cycle
+      fixture.detectChanges();
 
       expect(titleInput.nativeElement.value).toBe(mockTodo.title);
       expect(categorySelect.nativeElement.value).toBe(mockTodo.category);
     });
 
     it('should include all unique categories in dropdown', () => {
-      component.startEditing();
+      const editButton = fixture.debugElement.query(By.css('.edit-button'));
+      editButton.nativeElement.click();
       fixture.detectChanges();
 
       const options = fixture.debugElement.queryAll(By.css('.edit-category option'));
@@ -130,7 +138,13 @@ describe('TodoItemComponent', () => {
 
     it('should emit update event with new values when save button is clicked', () => {
       const updateSpy = jest.spyOn(component.update, 'emit');
-      component.startEditing();
+      
+      // Enter edit mode
+      const editButton = fixture.debugElement.query(By.css('.edit-button'));
+      editButton.nativeElement.click();
+      fixture.detectChanges();
+
+      // Update values
       component.editedTitle = 'Updated Title';
       component.editedCategory = 'Category 1';
       fixture.detectChanges();
@@ -150,7 +164,12 @@ describe('TodoItemComponent', () => {
 
     it('should not emit update event if title is empty', () => {
       const updateSpy = jest.spyOn(component.update, 'emit');
-      component.startEditing();
+      
+      // Enter edit mode
+      const editButton = fixture.debugElement.query(By.css('.edit-button'));
+      editButton.nativeElement.click();
+      fixture.detectChanges();
+
       component.editedTitle = '   ';
       fixture.detectChanges();
 
@@ -162,7 +181,11 @@ describe('TodoItemComponent', () => {
     });
 
     it('should exit edit mode and revert changes when cancel button is clicked', () => {
-      component.startEditing();
+      // Enter edit mode
+      const editButton = fixture.debugElement.query(By.css('.edit-button'));
+      editButton.nativeElement.click();
+      fixture.detectChanges();
+
       component.editedTitle = 'Changed Title';
       component.editedCategory = 'Changed Category';
       fixture.detectChanges();
@@ -177,7 +200,12 @@ describe('TodoItemComponent', () => {
 
     it('should handle Enter key to save changes', () => {
       const updateSpy = jest.spyOn(component.update, 'emit');
-      component.startEditing();
+      
+      // Enter edit mode
+      const editButton = fixture.debugElement.query(By.css('.edit-button'));
+      editButton.nativeElement.click();
+      fixture.detectChanges();
+
       component.editedTitle = 'Updated Title';
       fixture.detectChanges();
 
@@ -190,7 +218,11 @@ describe('TodoItemComponent', () => {
     });
 
     it('should handle Escape key to cancel editing', () => {
-      component.startEditing();
+      // Enter edit mode
+      const editButton = fixture.debugElement.query(By.css('.edit-button'));
+      editButton.nativeElement.click();
+      fixture.detectChanges();
+
       component.editedTitle = 'Changed Title';
       fixture.detectChanges();
 
