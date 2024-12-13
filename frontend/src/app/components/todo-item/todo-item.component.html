@@ -40,14 +40,16 @@
         <div class="edit-form">
             <input type="text"
                    class="edit-title"
-                   [(ngModel)]="editedTitle"
+                   [ngModel]="editedTitle"
+                   (ngModelChange)="editedTitle = $event"
                    (keydown)="onKeyDown($event)"
-                   placeholder="Todo title"
-                   #titleInput>
+                   placeholder="Todo title">
             
-            <select class="edit-category" [(ngModel)]="editedCategory">
+            <select class="edit-category" 
+                    [ngModel]="editedCategory"
+                    (ngModelChange)="editedCategory = $event">
                 <option *ngFor="let category of uniqueCategories" 
-                        [value]="category">
+                        [ngValue]="category">
                     {{category}}
                 </option>
             </select>
