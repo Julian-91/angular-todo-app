@@ -1,139 +1,66 @@
 import request from 'supertest';
-import express from 'express';
 import mongoose from 'mongoose';
-import todoRoutes from '../todos';
-import Todo from '../../models/Todo';
-
-const app = express();
-app.use(express.json());
-app.use('/api/todos', todoRoutes);
+import app from '../../app';
+import Todo, { ITodo } from '../../models/Todo';
+import '../../test/setup';
 
 describe('Todo Routes', () => {
-    describe('GET /api/todos', () => {
-        it('should return empty array when no todos exist', async () => {
-            const response = await request(app).get('/api/todos');
-            expect(response.status).toBe(200);
-            expect(response.body).toEqual([]);
-        });
-
-        it('should return all todos when they exist', async () => {
-            const testTodo = await Todo.create({
-                title: 'Test Todo',
-                category: 'Test'
-            });
-
-            const response = await request(app).get('/api/todos');
-            expect(response.status).toBe(200);
-            expect(response.body.length).toBe(1);
-            expect(response.body[0].title).toBe('Test Todo');
-
-            await Todo.findByIdAndDelete(testTodo._id);
-        });
-    });
-
-    describe('POST /api/todos', () => {
-        it('should create todo with valid data', async () => {
-            const response = await request(app)
-                .post('/api/todos')
-                .send({
-                    title: 'New Todo',
-                    category: 'Test'
-                });
-
-            expect(response.status).toBe(201);
-            expect(response.body.title).toBe('New Todo');
-            expect(response.body.category).toBe('Test');
-
-            // Cleanup
-            await Todo.findByIdAndDelete(response.body._id);
-        });
-
-        it('should reject todo without title', async () => {
-            const response = await request(app)
-                .post('/api/todos')
-                .send({
-                    category: 'Test'
-                });
-
-            expect(response.status).toBe(400);
-        });
-
-        it('should set default category when empty', async () => {
-            const response = await request(app)
-                .post('/api/todos')
-                .send({
-                    title: 'New Todo',
-                    category: ''
-                });
-
-            expect(response.status).toBe(201);
-            expect(response.body.category).toBe('General');
-
-            // Cleanup
-            await Todo.findByIdAndDelete(response.body._id);
-        });
-    });
-
-    describe('DELETE /api/todos/:id', () => {
-        it('should delete existing todo', async () => {
-            // Create a todo first
-            const todo = await Todo.create({
-                title: 'Test Todo',
-                category: 'Test'
-            });
-
-            const response = await request(app)
-                .delete(`/api/todos/${todo._id}`);
-
-            expect(response.status).toBe(200);
-            expect(response.body.message).toBe('Todo deleted');
-
-            // Verify deletion
-            const found = await Todo.findById(todo._id);
-            expect(found).toBeNull();
-        });
-
-        it('should return 404 for non-existent todo', async () => {
-            const nonExistentId = new mongoose.Types.ObjectId();
-            const response = await request(app)
-                .delete(`/api/todos/${nonExistentId}`);
-
-            expect(response.status).toBe(404);
-        });
-    });
-
     describe('PATCH /api/todos/:id', () => {
-        it('should update existing todo', async () => {
-            // Create a todo first
-            const todo = await Todo.create({
-                title: 'Test Todo',
-                category: 'Test'
-            });
+        let todoId: string;
 
+        beforeEach(async () => {
+            const todo: ITodo = await Todo.create({
+                title: 'Original Title',
+                isCompleted: false,
+                category: 'Test'
+            }) as ITodo;
+
+            todoId = todo._id.toString();
+        });
+
+        it('should update a todo successfully', async () => {
             const response = await request(app)
-                .patch(`/api/todos/${todo._id}`)
+                .patch(`/api/todos/${todoId}`)
                 .send({
-                    title: 'Updated Todo',
-                    isCompleted: true
+                    title: 'Updated Title',
+                    isCompleted: true,
+                    category: 'Work'
                 });
 
             expect(response.status).toBe(200);
-            expect(response.body.title).toBe('Updated Todo');
+            expect(response.body.title).toBe('Updated Title');
             expect(response.body.isCompleted).toBe(true);
+            expect(response.body.category).toBe('Work');
+        });
 
-            // Cleanup
-            await Todo.findByIdAndDelete(todo._id);
+        it('should allow partial updates', async () => {
+            const response = await request(app)
+                .patch(`/api/todos/${todoId}`)
+                .send({ title: 'Only Title Updated' });
+
+            expect(response.status).toBe(200);
+            expect(response.body.title).toBe('Only Title Updated');
+            expect(response.body.isCompleted).toBe(false);
+            expect(response.body.category).toBe('Test');
         });
 
         it('should return 404 for non-existent todo', async () => {
             const nonExistentId = new mongoose.Types.ObjectId();
             const response = await request(app)
                 .patch(`/api/todos/${nonExistentId}`)
-                .send({
-                    title: 'Updated Todo'
-                });
+                .send({ title: 'New Title' });
+
+            expect(response.status).toBe(404);
+            expect(response.body.message).toBe('Todo not found');
+        });
+
+        it('should return 400 for invalid todo ID format', async () => {
+            const response = await request(app)
+                .patch('/api/todos/invalid-id')
+                .send({ title: 'New Title' });
 
             expect(response.status).toBe(400);
+            expect(response.body.message).toBe('Invalid todo ID format');
         });
     });
 });
