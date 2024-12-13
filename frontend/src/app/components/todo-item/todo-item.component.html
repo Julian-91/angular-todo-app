@@ -49,7 +49,7 @@
                     [ngModel]="editedCategory"
                     (ngModelChange)="editedCategory = $event">
                 <option *ngFor="let category of uniqueCategories" 
-                        [ngValue]="category">
+                        [value]="category">
                     {{category}}
                 </option>
             </select>
