@@ -4,23 +4,23 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 let mongoServer: MongoMemoryServer;
 
 beforeAll(async () => {
-  mongoServer = await MongoMemoryServer.create();
-  const mongoUri = mongoServer.getUri();
-  await mongoose.connect(mongoUri);
+    // Close any existing connections
+    await mongoose.disconnect();
+    
+    mongoServer = await MongoMemoryServer.create();
+    const mongoUri = mongoServer.getUri();
+    await mongoose.connect(mongoUri);
 });
 
 afterAll(async () => {
-  if (mongoose.connection.readyState !== 0) {
     await mongoose.disconnect();
-  }
-  await mongoServer.stop();
+    await mongoServer.stop();
 });
 
-afterEach(async () => {
-  if (mongoose.connection.readyState !== 0 && mongoose.connection.db) {
+beforeEach(async () => {
+    // Clear all collections before each test
     const collections = await mongoose.connection.db.collections();
-    for (let collection of collections) {
-      await collection.deleteMany({});
+    for (const collection of collections) {
+        await collection.deleteMany({});
     }
-  }
 });
