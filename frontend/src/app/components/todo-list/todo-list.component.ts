@@ -50,6 +50,10 @@ export class TodoListComponent implements OnInit, OnDestroy {
     this.todoService.toggleCompletion(id);
   }
 
+  updateTodo(event: {id: string, updates: Partial<Todo>}): void {
+    this.todoService.updateTodo(event.id, event.updates);
+  }
+
   get categories(): string[] {
     const todoCategories = this.todos.map((todo) => todo.category);
     const allCategories = [...this.predefinedCategories, ...todoCategories]
