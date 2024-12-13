@@ -59,7 +59,7 @@ const deleteTodo: AsyncRequestHandler<TodoParams> = async (req, res) => {
     try {
         // Validate ObjectId
         if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-            res.status(500).json({ message: 'Invalid todo ID' });
+            res.status(400).json({ message: 'Invalid todo ID format' });
             return;
         }
 
