@@ -51,4 +51,13 @@ export class TodoService {
         });
     }
   }
+
+  updateTodo(id: string, updates: Partial<Todo>): void {
+    this.apiService.updateTodo(id, updates).subscribe((updatedTodo) => {
+      const todos = this.todosSubject.value.map((t) =>
+        t._id === id ? updatedTodo : t
+      );
+      this.todosSubject.next(todos);
+    });
+  }
 }
