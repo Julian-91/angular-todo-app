@@ -110,4 +110,87 @@ describe('TodoService', () => {
       });
     });
   });
+
+  describe('updateTodo', () => {
+    it('should update todo with new values', () => {
+      service['todosSubject'].next(mockTodos);
+
+      const updatedTodo: Todo = {
+        ...mockTodos[0],
+        title: 'Updated Title',
+        category: 'Updated Category'
+      };
+      apiService.updateTodo.mockReturnValue(of(updatedTodo));
+
+      service.updateTodo('1', {
+        title: 'Updated Title',
+        category: 'Updated Category'
+      });
+
+      expect(apiService.updateTodo).toHaveBeenCalledWith('1', {
+        title: 'Updated Title',
+        category: 'Updated Category'
+      });
+
+      service.getTodos().subscribe(todos => {
+        const todo = todos.find(t => t._id === '1');
+        expect(todo).toEqual(updatedTodo);
+      });
+    });
+
+    it('should handle partial updates', () => {
+      service['todosSubject'].next(mockTodos);
+
+      const updatedTodo: Todo = {
+        ...mockTodos[0],
+        title: 'Updated Title'
+      };
+      apiService.updateTodo.mockReturnValue(of(updatedTodo));
+
+      service.updateTodo('1', { title: 'Updated Title' });
+
+      expect(apiService.updateTodo).toHaveBeenCalledWith('1', { title: 'Updated Title' });
+
+      service.getTodos().subscribe(todos => {
+        const todo = todos.find(t => t._id === '1');
+        expect(todo).toEqual(updatedTodo);
+      });
+    });
+
+    it('should not update other todos in the list', () => {
+      service['todosSubject'].next(mockTodos);
+
+      const updatedTodo: Todo = {
+        ...mockTodos[0],
+        title: 'Updated Title'
+      };
+      apiService.updateTodo.mockReturnValue(of(updatedTodo));
+
+      service.updateTodo('1', { title: 'Updated Title' });
+
+      service.getTodos().subscribe(todos => {
+        // Check that other todo remains unchanged
+        const otherTodo = todos.find(t => t._id === '2');
+        expect(otherTodo).toEqual(mockTodos[1]);
+      });
+    });
+
+    it('should preserve existing todo properties when updating', () => {
+      service['todosSubject'].next(mockTodos);
+
+      const updatedTodo: Todo = {
+        ...mockTodos[0],
+        title: 'Updated Title'
+      };
+      apiService.updateTodo.mockReturnValue(of(updatedTodo));
+
+      service.updateTodo('1', { title: 'Updated Title' });
+
+      service.getTodos().subscribe(todos => {
+        const todo = todos.find(t => t._id === '1');
+        expect(todo?.isCompleted).toBe(mockTodos[0].isCompleted);
+        expect(todo?.category).toBe(mockTodos[0].category);
+      });
+    });
+  });
 });

@@ -22,16 +22,6 @@ $transition-time: 0.2s;
     font-family: system-ui, -apple-system, sans-serif;
 }
 
-/* Header */
-.todo-app h1 {
-    text-align: center;
-    color: $text-primary;
-    font-size: 2rem;
-    font-weight: 600;
-    margin-bottom: 2rem;
-    letter-spacing: -0.025em;
-}
-
 /* Input group */
 .input-group {
     display: flex;
@@ -134,13 +124,18 @@ $transition-time: 0.2s;
 }
 
 /* Todo list */
-.todo-app ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+.todos-list {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+
+    app-todo-item {
+        display: block;
+        
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
 }
 
 /* Empty state */
@@ -150,11 +145,15 @@ $transition-time: 0.2s;
     color: $text-secondary;
     background-color: $background-color;
     border-radius: 0.5rem;
-    margin-top: 2rem;
+    margin-top: 1rem;
     
     p {
         font-size: 1.125rem;
         margin-bottom: 1rem;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
     }
 }
 

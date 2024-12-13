@@ -4,23 +4,29 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 let mongoServer: MongoMemoryServer;
 
 beforeAll(async () => {
-  mongoServer = await MongoMemoryServer.create();
-  const mongoUri = mongoServer.getUri();
-  await mongoose.connect(mongoUri);
+    // Close any existing connections
+    if (mongoose.connection.readyState !== 0) {
+        await mongoose.disconnect();
+    }
+    
+    mongoServer = await MongoMemoryServer.create();
+    const mongoUri = mongoServer.getUri();
+    await mongoose.connect(mongoUri);
 });
 
 afterAll(async () => {
-  if (mongoose.connection.readyState !== 0) {
-    await mongoose.disconnect();
-  }
-  await mongoServer.stop();
+    if (mongoose.connection.readyState !== 0) {
+        await mongoose.disconnect();
+    }
+    await mongoServer.stop();
 });
 
-afterEach(async () => {
-  if (mongoose.connection.readyState !== 0 && mongoose.connection.db) {
-    const collections = await mongoose.connection.db.collections();
-    for (let collection of collections) {
-      await collection.deleteMany({});
+beforeEach(async () => {
+    // Only try to clear collections if we have an active connection
+    if (mongoose.connection.readyState === 1) { // 1 = connected
+        const collections = mongoose.connection.collections;
+        for (const key in collections) {
+            await collections[key].deleteMany({});
+        }
     }
-  }
 });

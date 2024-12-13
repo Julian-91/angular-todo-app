@@ -59,7 +59,7 @@ const deleteTodo: AsyncRequestHandler<TodoParams> = async (req, res) => {
     try {
         // Validate ObjectId
         if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-            res.status(500).json({ message: 'Invalid todo ID' });
+            res.status(400).json({ message: 'Invalid todo ID format' });
             return;
         }
 
@@ -77,27 +77,52 @@ const deleteTodo: AsyncRequestHandler<TodoParams> = async (req, res) => {
 
 // PATCH update a todo
 const updateTodo: AsyncRequestHandler<TodoParams, any, TodoBody> = async (req, res) => {
+    const { title, isCompleted, category } = req.body;
+
     try {
         // Validate ObjectId
         if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-            res.status(500).json({ message: 'Invalid todo ID' });
+            res.status(400).json({ message: 'Invalid todo ID format' });
             return;
         }
 
+        // Find the todo first to check if it exists
+        const existingTodo = await Todo.findById(req.params.id);
+        if (!existingTodo) {
+            res.status(404).json({ message: 'Todo not found' });
+            return;
+        }
+
+        // Validate title if it's being updated
+        if (title !== undefined && title.trim().length === 0) {
+            res.status(400).json({ message: 'Title cannot be empty' });
+            return;
+        }
+
+        // Build update object with only provided fields
+        const updateData: TodoBody = {};
+        if (title !== undefined) updateData.title = title.trim();
+        if (isCompleted !== undefined) updateData.isCompleted = isCompleted;
+        if (category !== undefined) updateData.category = category;
+
+        // Update todo with validation
         const updatedTodo = await Todo.findByIdAndUpdate(
             req.params.id,
-            req.body,
-            { new: true }
+            updateData,
+            { 
+                new: true,          // Return the updated document
+                runValidators: true // Run model validators
+            }
         );
-
-        if (!updatedTodo) {
-            res.status(400).json({ message: 'Todo not found' });
-            return;
-        }
 
         res.json(updatedTodo);
     } catch (err: any) {
-        res.status(500).json({ message: err.message || 'Error updating todo' });
+        // Handle different types of errors
+        if (err instanceof mongoose.Error.ValidationError) {
+            res.status(400).json({ message: err.message });
+        } else {
+            res.status(500).json({ message: err.message || 'Error updating todo' });
+        }
     }
 };
 
