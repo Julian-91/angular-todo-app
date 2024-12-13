@@ -23,9 +23,15 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '18.x'
-        cache: 'npm'
-        cache-dependency-path: './frontend/package-lock.json'
-        cache-prefix: ${{ env.CACHE_VERSION }}
+
+    - name: Cache dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~/.npm
+        key: npm-frontend-${{ env.CACHE_VERSION }}-${{ hashFiles('./frontend/package-lock.json') }}
+        restore-keys: |
+          npm-frontend-${{ env.CACHE_VERSION }}-
+          npm-frontend-
     
     - name: Install Dependencies
       run: npm ci
@@ -53,9 +59,15 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '18.x'
-        cache: 'npm'
-        cache-dependency-path: './backend/package-lock.json'
-        cache-prefix: ${{ env.CACHE_VERSION }}
+
+    - name: Cache dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~/.npm
+        key: npm-backend-${{ env.CACHE_VERSION }}-${{ hashFiles('./backend/package-lock.json') }}
+        restore-keys: |
+          npm-backend-${{ env.CACHE_VERSION }}-
+          npm-backend-
     
     - name: Install Dependencies
       run: npm ci
@@ -84,9 +96,15 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '18.x'
-        cache: 'npm'
-        cache-dependency-path: './frontend/package-lock.json'
-        cache-prefix: ${{ env.CACHE_VERSION }}
+
+    - name: Cache dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~/.npm
+        key: npm-frontend-${{ env.CACHE_VERSION }}-${{ hashFiles('./frontend/package-lock.json') }}
+        restore-keys: |
+          npm-frontend-${{ env.CACHE_VERSION }}-
+          npm-frontend-
     
     - name: Install Dependencies
       run: npm ci
@@ -120,9 +138,15 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '18.x'
-        cache: 'npm'
-        cache-dependency-path: './backend/package-lock.json'
-        cache-prefix: ${{ env.CACHE_VERSION }}
+
+    - name: Cache dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~/.npm
+        key: npm-backend-${{ env.CACHE_VERSION }}-${{ hashFiles('./backend/package-lock.json') }}
+        restore-keys: |
+          npm-backend-${{ env.CACHE_VERSION }}-
+          npm-backend-
     
     - name: Install Dependencies
       run: npm ci
