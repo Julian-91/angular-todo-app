@@ -3,6 +3,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import todoRoutes from '../../routes/todos';
 import Todo from '../../models/Todo';
+import '../setup';
 
 const app = express();
 app.use(express.json());
