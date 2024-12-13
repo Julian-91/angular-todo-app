@@ -22,6 +22,7 @@ describe('TodoItemComponent', () => {
     fixture = TestBed.createComponent(TodoItemComponent);
     component = fixture.componentInstance;
     component.todo = mockTodo;
+    component.availableCategories = ['Category 1', 'Category 2'];
     fixture.detectChanges();
   });
 
@@ -89,5 +90,116 @@ describe('TodoItemComponent', () => {
     
     expect(checkbox.nativeElement.id).toBe('todo-checkbox-1');
     expect(label.nativeElement.getAttribute('for')).toBe('todo-checkbox-1');
+  });
+
+  describe('Edit Mode', () => {
+    it('should enter edit mode when edit button is clicked', () => {
+      const editButton = fixture.debugElement.query(By.css('.edit-button'));
+      editButton.nativeElement.click();
+      fixture.detectChanges();
+
+      const editForm = fixture.debugElement.query(By.css('.edit-form'));
+      expect(editForm).toBeTruthy();
+      expect(component.isEditing).toBe(true);
+    });
+
+    it('should populate edit form with current todo data', () => {
+      component.startEditing();
+      fixture.detectChanges();
+
+      const titleInput = fixture.debugElement.query(By.css('.edit-title'));
+      const categorySelect = fixture.debugElement.query(By.css('.edit-category'));
+
+      expect(titleInput.nativeElement.value).toBe(mockTodo.title);
+      expect(categorySelect.nativeElement.value).toBe(mockTodo.category);
+    });
+
+    it('should include all unique categories in dropdown', () => {
+      component.startEditing();
+      fixture.detectChanges();
+
+      const options = fixture.debugElement.queryAll(By.css('.edit-category option'));
+      const categories = options.map(option => option.nativeElement.value);
+
+      expect(categories).toContain('General');
+      expect(categories).toContain('Category 1');
+      expect(categories).toContain('Category 2');
+      expect(categories).toContain(mockTodo.category);
+      expect(new Set(categories).size).toBe(categories.length); // No duplicates
+    });
+
+    it('should emit update event with new values when save button is clicked', () => {
+      const updateSpy = jest.spyOn(component.update, 'emit');
+      component.startEditing();
+      component.editedTitle = 'Updated Title';
+      component.editedCategory = 'Category 1';
+      fixture.detectChanges();
+
+      const saveButton = fixture.debugElement.query(By.css('.save-button'));
+      saveButton.nativeElement.click();
+
+      expect(updateSpy).toHaveBeenCalledWith({
+        id: mockTodo._id,
+        updates: {
+          title: 'Updated Title',
+          category: 'Category 1'
+        }
+      });
+      expect(component.isEditing).toBe(false);
+    });
+
+    it('should not emit update event if title is empty', () => {
+      const updateSpy = jest.spyOn(component.update, 'emit');
+      component.startEditing();
+      component.editedTitle = '   ';
+      fixture.detectChanges();
+
+      const saveButton = fixture.debugElement.query(By.css('.save-button'));
+      saveButton.nativeElement.click();
+
+      expect(updateSpy).not.toHaveBeenCalled();
+      expect(component.isEditing).toBe(true);
+    });
+
+    it('should exit edit mode and revert changes when cancel button is clicked', () => {
+      component.startEditing();
+      component.editedTitle = 'Changed Title';
+      component.editedCategory = 'Changed Category';
+      fixture.detectChanges();
+
+      const cancelButton = fixture.debugElement.query(By.css('.cancel-button'));
+      cancelButton.nativeElement.click();
+
+      expect(component.isEditing).toBe(false);
+      expect(component.editedTitle).toBe(mockTodo.title);
+      expect(component.editedCategory).toBe(mockTodo.category);
+    });
+
+    it('should handle Enter key to save changes', () => {
+      const updateSpy = jest.spyOn(component.update, 'emit');
+      component.startEditing();
+      component.editedTitle = 'Updated Title';
+      fixture.detectChanges();
+
+      const titleInput = fixture.debugElement.query(By.css('.edit-title'));
+      const event = new KeyboardEvent('keydown', { key: 'Enter' });
+      titleInput.nativeElement.dispatchEvent(event);
+
+      expect(updateSpy).toHaveBeenCalled();
+      expect(component.isEditing).toBe(false);
+    });
+
+    it('should handle Escape key to cancel editing', () => {
+      component.startEditing();
+      component.editedTitle = 'Changed Title';
+      fixture.detectChanges();
+
+      const titleInput = fixture.debugElement.query(By.css('.edit-title'));
+      const event = new KeyboardEvent('keydown', { key: 'Escape' });
+      titleInput.nativeElement.dispatchEvent(event);
+
+      expect(component.isEditing).toBe(false);
+      expect(component.editedTitle).toBe(mockTodo.title);
+    });
   });
 });
