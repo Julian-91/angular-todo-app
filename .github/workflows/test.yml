@@ -33,7 +33,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: frontend-build
-        path: frontend/dist/
+        path: frontend/dist/angular-todo-app/
         retention-days: 1
 
   build-backend:
@@ -89,7 +89,7 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: frontend-build
-        path: frontend/dist
+        path: frontend/dist/angular-todo-app
     
     - name: Run Tests
       run: npm test
