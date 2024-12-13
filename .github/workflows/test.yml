@@ -2,9 +2,9 @@ name: Test Frontend and Backend
 
 on:
   push:
-    branches: [ main, add-github-actions ]
+    branches: [ '**' ]  # Run on all branches
   pull_request:
-    branches: [ main ]
+    branches: [ main ]  # Only run on PRs targeting main
 
 jobs:
   test-frontend:
