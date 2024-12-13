@@ -1,41 +1,38 @@
-<div class="todo-app">
-    <h1>Todo App</h1>
-    <div class="input-group">
-        <input type="text" [(ngModel)]="newTodoTitle" placeholder="Add a new todo" (keyup.enter)="addTodo()" />
-
+<div class="todo-list-container">
+    <!-- Add Todo Form -->
+    <div class="add-todo-form">
+        <input type="text"
+               [(ngModel)]="newTodoTitle"
+               placeholder="Add a new todo"
+               (keyup.enter)="addTodo()">
         <select [(ngModel)]="newTodoCategory">
+            <option value="">Select Category</option>
             <option *ngFor="let category of categories" [value]="category">
-                {{ category }}
+                {{category}}
             </option>
-            <option value="">Add New Category</option>
         </select>
         <button (click)="addTodo()">Add</button>
     </div>
 
     <!-- Category Filter -->
     <div class="category-filter">
-        <label for="categoryFilter">Filter by category:</label>
-        <select id="categoryFilter" [(ngModel)]="selectedCategory">
+        <label>Filter by category:</label>
+        <select [(ngModel)]="selectedCategory">
             <option value="All">All</option>
             <option *ngFor="let category of categories" [value]="category">
-                {{ category }}
+                {{category}}
             </option>
         </select>
     </div>
 
     <!-- Todo List -->
-    <ul>
-        <li *ngFor="let todo of filteredTodos">
-            <app-todo-item [todo]="todo" 
-                          (delete)="deleteTodo($event)"
-                          (toggle)="toggleCompletion($event)">
-            </app-todo-item>
-        </li>
-    </ul>
-
-    <!-- Empty state -->
-    <div class="empty-state" *ngIf="!filteredTodos?.length">
-        <p>No todos found</p>
-        <p *ngIf="selectedCategory !== 'All'">Try changing the category filter</p>
+    <div class="todos-list">
+        <app-todo-item *ngFor="let todo of filteredTodos"
+                       [todo]="todo"
+                       [availableCategories]="categories"
+                       (delete)="deleteTodo($event)"
+                       (toggle)="toggleCompletion($event)"
+                       (update)="updateTodo($event)">
+        </app-todo-item>
     </div>
 </div>
