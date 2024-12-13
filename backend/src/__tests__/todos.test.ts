@@ -25,12 +25,13 @@ describe('PATCH /api/todos/:id', () => {
     let todoId: string;
 
     beforeEach(async () => {
-        // Create a test todo
-        const todo = await Todo.create({
+        // Create a test todo with proper typing
+        const todo: ITodo = await Todo.create({
             title: 'Original Title',
             isCompleted: false,
             category: 'Test'
-        });
+        }) as ITodo;  // Assert the type as ITodo
+
         todoId = todo._id.toString();
     });
 
