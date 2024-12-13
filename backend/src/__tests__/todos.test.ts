@@ -2,7 +2,7 @@ import request from 'supertest';
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import app from '../app';
-import Todo from '../models/Todo';
+import Todo, { ITodo } from '../models/Todo';
 
 let mongoServer: MongoMemoryServer;
 
@@ -26,12 +26,11 @@ describe('PATCH /api/todos/:id', () => {
 
     beforeEach(async () => {
         // Create a test todo
-        const todo = new Todo({
+        const todo = await Todo.create({
             title: 'Original Title',
             isCompleted: false,
             category: 'Test'
         });
-        await todo.save();
         todoId = todo._id.toString();
     });
 
