@@ -46,8 +46,7 @@
                    #titleInput>
             
             <select class="edit-category" [(ngModel)]="editedCategory">
-                <option value="General">General</option>
-                <option *ngFor="let category of availableCategories" 
+                <option *ngFor="let category of uniqueCategories" 
                         [value]="category">
                     {{category}}
                 </option>
