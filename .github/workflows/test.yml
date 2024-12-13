@@ -1,0 +1,163 @@
+name: Test Frontend and Backend
+
+on:
+  push:
+    branches:
+      - main   # only run on push to main
+  pull_request:    # run on all PRs
+
+env:
+  CACHE_VERSION: 1  # Increment this to invalidate all caches
+
+jobs:
+  build-frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+
+    - name: Cache dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~/.npm
+        key: npm-frontend-${{ env.CACHE_VERSION }}-${{ hashFiles('./frontend/package-lock.json') }}
+        restore-keys: |
+          npm-frontend-${{ env.CACHE_VERSION }}-
+          npm-frontend-
+    
+    - name: Install Dependencies
+      run: npm ci
+
+    - name: Build Application
+      run: npm run build
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: frontend-build
+        path: frontend/dist/angular-todo-app/
+        retention-days: 1
+
+  build-backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+
+    - name: Cache dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~/.npm
+        key: npm-backend-${{ env.CACHE_VERSION }}-${{ hashFiles('./backend/package-lock.json') }}
+        restore-keys: |
+          npm-backend-${{ env.CACHE_VERSION }}-
+          npm-backend-
+    
+    - name: Install Dependencies
+      run: npm ci
+
+    - name: Build Application
+      run: npm run build
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: backend-build
+        path: backend/dist/
+        retention-days: 1
+
+  test-frontend:
+    needs: build-frontend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+
+    - name: Cache dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~/.npm
+        key: npm-frontend-${{ env.CACHE_VERSION }}-${{ hashFiles('./frontend/package-lock.json') }}
+        restore-keys: |
+          npm-frontend-${{ env.CACHE_VERSION }}-
+          npm-frontend-
+    
+    - name: Install Dependencies
+      run: npm ci
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: frontend-build
+        path: frontend/dist/angular-todo-app
+    
+    - name: Run Tests
+      run: npm test
+
+  test-backend:
+    needs: build-backend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+
+    services:
+      mongodb:
+        image: mongo:4.4
+        ports:
+          - 27017:27017
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+
+    - name: Cache dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~/.npm
+        key: npm-backend-${{ env.CACHE_VERSION }}-${{ hashFiles('./backend/package-lock.json') }}
+        restore-keys: |
+          npm-backend-${{ env.CACHE_VERSION }}-
+          npm-backend-
+    
+    - name: Install Dependencies
+      run: npm ci
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: backend-build
+        path: backend/dist
+    
+    - name: Run Tests
+      run: npm test
+      env:
+        MONGODB_URI: mongodb://localhost:27017/todos
