@@ -14,11 +14,11 @@ const meta: Meta<TodoItemComponent> = {
     ],
     tags: ['autodocs'],
     argTypes: {
-        delete: { 
+        delete: {
             action: 'delete',
             description: 'Event emitted when todo is deleted'
         },
-        toggle: { 
+        toggle: {
             action: 'toggle',
             description: 'Event emitted when todo completion status is toggled'
         },
@@ -31,7 +31,7 @@ const meta: Meta<TodoItemComponent> = {
         },
         availableCategories: {
             description: 'List of available categories to choose from',
-            control: 'array'
+            control: 'object'
         }
     },
     args: {
