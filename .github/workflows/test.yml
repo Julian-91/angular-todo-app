@@ -1,6 +1,13 @@
 name: Test Frontend and Backend
 
 on:
+  workflow_dispatch:
+    inputs:
+      updateSnapshots:
+        description: 'Update snapshots'
+        type: boolean
+        required: false
+        default: false
   push:
     branches:
       - main   # only run on push to main
@@ -122,7 +129,7 @@ jobs:
       run: npx playwright install --with-deps chromium
 
     - name: Run Visual Tests
-      run: npx playwright test
+      run: npx playwright test ${{ github.event.inputs.updateSnapshots == 'true' && '--update-snapshots' || '' }}
 
     - name: Upload test results
       if: failure()
