@@ -19,7 +19,7 @@ $transition-time: 0.2s;
     background-color: $card-background;
     box-shadow: 0 4px 6px -1px $shadow-color, 0 2px 4px -2px $shadow-color;
     border-radius: 1rem;
-    font-family: system-ui, -apple-system, sans-serif;
+    font-family: 'Inter', sans-serif;
 }
 
 /* Input group */
@@ -27,7 +27,7 @@ $transition-time: 0.2s;
     display: flex;
     gap: 0.5rem;
     margin-bottom: 1.5rem;
-    
+
     input[type='text'] {
         flex: 2;
         padding: 0.75rem 1rem;
@@ -36,13 +36,13 @@ $transition-time: 0.2s;
         border-radius: 0.5rem;
         outline: none;
         transition: border-color $transition-time;
-        
+
         &:focus {
             border-color: $primary-color;
             box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
         }
     }
-    
+
     select {
         flex: 1;
         padding: 0.75rem 1rem;
@@ -53,17 +53,17 @@ $transition-time: 0.2s;
         cursor: pointer;
         background-color: $card-background;
         transition: border-color $transition-time;
-        
+
         &:hover {
             border-color: $primary-color;
         }
-        
+
         &:focus {
             border-color: $primary-color;
             box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
         }
     }
-    
+
     button {
         padding: 0.75rem 1.5rem;
         font-size: 1rem;
@@ -74,12 +74,12 @@ $transition-time: 0.2s;
         border-radius: 0.5rem;
         cursor: pointer;
         transition: background-color $transition-time, transform $transition-time;
-        
+
         &:hover {
             background-color: $primary-hover;
             transform: translateY(-1px);
         }
-        
+
         &:active {
             transform: translateY(0);
         }
@@ -95,12 +95,12 @@ $transition-time: 0.2s;
     padding: 1rem;
     background-color: $background-color;
     border-radius: 0.5rem;
-    
+
     label {
         color: $text-secondary;
         font-weight: 500;
     }
-    
+
     select {
         flex: 1;
         padding: 0.75rem 1rem;
@@ -111,11 +111,11 @@ $transition-time: 0.2s;
         cursor: pointer;
         background-color: $card-background;
         transition: all $transition-time;
-        
+
         &:hover {
             border-color: $primary-color;
         }
-        
+
         &:focus {
             border-color: $primary-color;
             box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
@@ -131,7 +131,7 @@ $transition-time: 0.2s;
 
     app-todo-item {
         display: block;
-        
+
         &:last-child {
             margin-bottom: 0;
         }
@@ -146,7 +146,7 @@ $transition-time: 0.2s;
     background-color: $background-color;
     border-radius: 0.5rem;
     margin-top: 1rem;
-    
+
     p {
         font-size: 1.125rem;
         margin-bottom: 1rem;
@@ -163,17 +163,17 @@ $transition-time: 0.2s;
         margin: 1rem;
         padding: 1rem;
     }
-    
+
     .input-group {
         flex-direction: column;
-        
+
         input[type='text'],
         select,
         button {
             width: 100%;
         }
     }
-    
+
     .category-filter {
         flex-direction: column;
         align-items: stretch;
