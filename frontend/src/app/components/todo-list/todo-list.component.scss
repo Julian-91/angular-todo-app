@@ -19,7 +19,7 @@ $transition-time: 0.2s;
     background-color: $card-background;
     box-shadow: 0 4px 6px -1px $shadow-color, 0 2px 4px -2px $shadow-color;
     border-radius: 1rem;
-    font-family: 'Inter', sans-serif;
+    font-family: system-ui, -apple-system, sans-serif;
 }
 
 /* Input group */
