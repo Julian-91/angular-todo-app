@@ -14,7 +14,7 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   testDir: './tests',
   snapshotDir: './tests/snapshots',
-  snapshotPathTemplate: '{snapshotDir}/{testFilePath}/{arg}{ext}',
+  snapshotPathTemplate: '{snapshotDir}/{platform}/{arg}{ext}',
   expect: {
     toHaveScreenshot: { maxDiffPixels: 100 },
   },
