@@ -115,8 +115,11 @@ jobs:
         name: frontend-build
         path: frontend/dist/angular-todo-app
     
-    - name: Run Tests
+    - name: Run Component Tests
       run: npm test
+
+    - name: Run Visual Tests
+      run: npx playwright test
 
   test-backend:
     needs: build-backend
@@ -157,7 +160,7 @@ jobs:
         name: backend-build
         path: backend/dist
     
-    - name: Run Tests
+    - name: Run Unit Tests
       run: npm test
       env:
         MONGODB_URI: mongodb://localhost:27017/todos
