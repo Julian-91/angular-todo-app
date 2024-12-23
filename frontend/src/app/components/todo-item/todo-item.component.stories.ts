@@ -13,7 +13,6 @@ const meta: Meta<TodoItemComponent> = {
         }),
     ],
     tags: ['autodocs'],
-    // Component parameters that can be adjusted in the Storybook UI
     argTypes: {
         delete: { 
             action: 'delete',
@@ -35,7 +34,6 @@ const meta: Meta<TodoItemComponent> = {
             control: 'array'
         }
     },
-    // Default parameters for all stories
     args: {
         availableCategories: ['Work', 'Personal', 'Shopping', 'Health', 'Learning']
     }
@@ -44,7 +42,6 @@ const meta: Meta<TodoItemComponent> = {
 export default meta;
 type Story = StoryObj<TodoItemComponent>;
 
-// Basic todo item
 export const Default: Story = {
     args: {
         todo: {
@@ -56,7 +53,6 @@ export const Default: Story = {
     }
 };
 
-// Completed todo item
 export const Completed: Story = {
     args: {
         todo: {
@@ -68,7 +64,6 @@ export const Completed: Story = {
     }
 };
 
-// Todo with long title to test text wrapping
 export const LongTitle: Story = {
     args: {
         todo: {
@@ -80,7 +75,6 @@ export const LongTitle: Story = {
     }
 };
 
-// Todo with no category
 export const NoCategory: Story = {
     args: {
         todo: {
@@ -92,7 +86,6 @@ export const NoCategory: Story = {
     }
 };
 
-// Todo with special characters
 export const SpecialCharacters: Story = {
     args: {
         todo: {
@@ -104,7 +97,6 @@ export const SpecialCharacters: Story = {
     }
 };
 
-// Todo with custom category
 export const CustomCategory: Story = {
     args: {
         todo: {
@@ -117,7 +109,6 @@ export const CustomCategory: Story = {
     }
 };
 
-// Todo with many available categories
 export const ManyCategories: Story = {
     args: {
         todo: {
@@ -141,7 +132,6 @@ export const ManyCategories: Story = {
     }
 };
 
-// Todo with emoji in title
 export const EmojiTitle: Story = {
     args: {
         todo: {
