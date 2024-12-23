@@ -121,16 +121,6 @@ jobs:
     - name: Install Playwright
       run: npx playwright install --with-deps chromium
 
-    - name: Run visual tests
-      run: npx playwright test --update-snapshots
-
-    - name: Upload snapshots
-      uses: actions/upload-artifact@v4
-      with:
-        name: linux-snapshots
-        path: frontend/tests/snapshots    # Adjust this path to where your snapshots are stored
-        retention-days: 1
-
     - name: Run Visual Tests
       run: npx playwright test
 
