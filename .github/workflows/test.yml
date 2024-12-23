@@ -118,6 +118,9 @@ jobs:
     - name: Run Component Tests
       run: npm test
 
+    - name: Install Playwright
+      run: npx playwright install --with-deps chromium
+
     - name: Run Visual Tests
       run: npx playwright test
 
