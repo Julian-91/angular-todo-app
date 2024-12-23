@@ -142,3 +142,17 @@ export const EmojiTitle: Story = {
         }
     }
 };
+
+export const EditTodo: Story = {
+    args: {
+        todo: {
+            _id: '1',
+            title: 'Complete the project',
+            isCompleted: false,
+            category: 'Work'
+        },
+        isEditing: true,
+        editedTitle: 'Complete the project',
+        editedCategory: 'Work'
+    }
+};

@@ -1,6 +1,13 @@
 name: Test Frontend and Backend
 
 on:
+  workflow_dispatch:
+    inputs:
+      updateSnapshots:
+        description: 'Update snapshots'
+        type: boolean
+        required: false
+        default: false
   push:
     branches:
       - main   # only run on push to main
@@ -115,8 +122,22 @@ jobs:
         name: frontend-build
         path: frontend/dist/angular-todo-app
     
-    - name: Run Tests
+    - name: Run Component Tests
       run: npm test
+
+    - name: Install Playwright
+      run: npx playwright install --with-deps chromium
+
+    - name: Run Visual Tests
+      run: npx playwright test ${{ github.event.inputs.updateSnapshots == 'true' && '--update-snapshots' || '' }}
+
+    - name: Upload test results
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: playwright-results
+        path: frontend/playwright-report
+        retention-days: 1
 
   test-backend:
     needs: build-backend
@@ -157,7 +178,7 @@ jobs:
         name: backend-build
         path: backend/dist
     
-    - name: Run Tests
+    - name: Run Unit Tests
       run: npm test
       env:
         MONGODB_URI: mongodb://localhost:27017/todos
