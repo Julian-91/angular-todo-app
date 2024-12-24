@@ -26,6 +26,7 @@ jobs:
         id: run_code_reviewer
         run: |
           git fetch origin main
+          git fetch origin ${{ github.event.pull_request.head.sha }}
           DIFF_TEXT=$(git diff origin/main ${{ github.event.pull_request.head.sha }})
           OUTPUT=$(node scripts/code-reviewer.mjs "$DIFF_TEXT")
           echo "review_response<<EOF" >> $GITHUB_OUTPUT
