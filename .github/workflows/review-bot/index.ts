@@ -1,4 +1,4 @@
-import { EfficientReviewBot } from './reviewBot.mjs';
+import { EfficientReviewBot } from './reviewBot';
 
 async function main() {
     // Get environment variables

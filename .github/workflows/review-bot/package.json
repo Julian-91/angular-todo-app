@@ -5,10 +5,10 @@
     "main": "index.mts",
     "type": "module",
     "dependencies": {
-        "@anthropic-ai/sdk": "^0.12.8",
         "@octokit/rest": "^19.0.7",
-        "@types/node": "^18.15.11",
+        "@anthropic-ai/sdk": "^0.14.1",
+        "typescript": "^5.0.4",
         "ts-node": "^10.9.1",
-        "typescript": "^5.0.4"
+        "@types/node": "^18.15.11"
     }
 }

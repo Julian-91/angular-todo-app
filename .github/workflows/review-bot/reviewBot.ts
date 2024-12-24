@@ -50,7 +50,15 @@ class EfficientReviewBot {
     }
 
     async analyzeChanges(diff: string, filename: string): Promise<string> {
-        const prompt = `Review these code changes. Focus only on critical issues:
+        try {
+            const message = await this.anthropic.messages.create({
+                model: 'claude-3-sonnet',
+                max_tokens: 1024,
+                temperature: 0,
+                system: "You are a senior software developer performing code reviews. Focus only on critical issues. Be concise and direct.",
+                messages: [{
+                    role: 'user',
+                    content: `Review these code changes. Focus only on critical issues:
 - Security issues
 - Performance problems
 - Major bugs
@@ -60,54 +68,59 @@ File: ${filename}
 Changes:
 ${diff}
 
-Provide ONLY critical feedback in bullet points. Be brief and concise.`;
+Provide ONLY critical feedback in bullet points. Be brief and concise.`
+                }]
+            });
 
-        const response = await this.anthropic.beta.messages.create({
-            model: 'claude-3-sonnet',
-            messages: [{ role: 'user', content: prompt }],
-            max_tokens: 500, // Limited output
-        });
-
-        return response.content[0].text;
+            return message.content[0].text;
+        } catch (error) {
+            console.error('Error analyzing changes:', error);
+            throw error;
+        }
     }
 
     async reviewPullRequest(owner: string, repo: string, prNumber: number): Promise<void> {
-        const { data: files } = await this.octokit.pulls.listFiles({
-            owner,
-            repo,
-            pull_number: prNumber,
-        });
-
-        const significantChanges = files.filter(file =>
-            this.shouldReviewFile(file.filename, file.additions, file.deletions)
-        );
-
-        if (significantChanges.length === 0) {
-            console.log('No significant changes found that require review');
-            return;
-        }
-
-        const reviews: string[] = [];
-
-        for (const file of significantChanges) {
-            if (!file.patch) continue;
-
-            const cleanedDiff = this.cleanDiff(file.patch);
-            const feedback = await this.analyzeChanges(cleanedDiff, file.filename);
-
-            if (feedback.trim()) {
-                reviews.push(`### ${file.filename}\n${feedback}`);
-            }
-        }
-
-        if (reviews.length > 0) {
-            await this.octokit.pulls.createReview({
+        try {
+            const { data: files } = await this.octokit.pulls.listFiles({
                 owner,
                 repo,
                 pull_number: prNumber,
-                event: 'COMMENT',
-                body: reviews.join('\n\n')
             });
+
+            const significantChanges = files.filter(file =>
+                this.shouldReviewFile(file.filename, file.additions, file.deletions)
+            );
+
+            if (significantChanges.length === 0) {
+                console.log('No significant changes found that require review');
+                return;
+            }
+
+            const reviews: string[] = [];
+
+            for (const file of significantChanges) {
+                if (!file.patch) continue;
+
+                const cleanedDiff = this.cleanDiff(file.patch);
+                const feedback = await this.analyzeChanges(cleanedDiff, file.filename);
+
+                if (feedback.trim()) {
+                    reviews.push(`### ${file.filename}\n${feedback}`);
+                }
+            }
+
+            if (reviews.length > 0) {
+                await this.octokit.pulls.createReview({
+                    owner,
+                    repo,
+                    pull_number: prNumber,
+                    event: 'COMMENT',
+                    body: reviews.join('\n\n')
+                });
+            }
+        } catch (error) {
+            console.error('Error reviewing pull request:', error);
+            throw error;
         }
     }
 }
