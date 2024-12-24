@@ -22,20 +22,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Get PR Diff
-        id: get_diff
-        run: |
-          git fetch origin main
-          git fetch origin ${{ github.event.pull_request.head.sha }}
-          DIFF_CONTENT=$(git diff origin/main ${{ github.event.pull_request.head.sha }})
-          echo "diff_content<<EOF" >> $GITHUB_OUTPUT
-          echo "$DIFF_CONTENT" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-
       - name: Run code reviewer
         id: run_code_reviewer
         run: |
-          OUTPUT=$(node scripts/code-reviewer.mjs ${{ steps.get_diff.outputs.diff_content }})
+          DIFF_TEXT=$(git diff origin/main ${{ github.event.pull_request.head.sha }})
+          OUTPUT=$(node scripts/code-reviewer.mjs "$DIFF_TEXT")
           echo "review_response<<EOF" >> $GITHUB_OUTPUT
           echo "$OUTPUT" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
