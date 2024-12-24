@@ -27,4 +27,4 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_EVENT_NUMBER: ${{ github.event.pull_request.number }}
-        run: npx ts-node index.ts
+        run: npx ts-node --esm index.ts

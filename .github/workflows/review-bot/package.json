@@ -3,6 +3,7 @@
     "version": "1.0.0",
     "description": "AI-powered Code Review Bot for GitHub",
     "main": "index.ts",
+    "type": "module",
     "dependencies": {
         "@octokit/rest": "^19.0.7",
         "@anthropic-ai/sdk": "^0.12.0",
