@@ -35,10 +35,10 @@ jobs:
       - name: Run code reviewer
         id: run_code_reviewer
         run: |
-            OUTPUT=$(node scripts/code-reviewer.mjs ${{ steps.get_diff.outputs.diff_content }})
-            echo "review_response<<EOF" >> $GITHUB_OUTPUT
-            echo "$OUTPUT" >> $GITHUB_OUTPUT
-            echo "EOF" >> $GITHUB_OUTPUT
+          OUTPUT=$(node scripts/code-reviewer.mjs ${{ steps.get_diff.outputs.diff_content }})
+          echo "review_response<<EOF" >> $GITHUB_OUTPUT
+          echo "$OUTPUT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
