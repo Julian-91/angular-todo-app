@@ -52,7 +52,7 @@ class EfficientReviewBot {
     async analyzeChanges(diff: string, filename: string): Promise<string> {
         try {
             const message = await this.anthropic.messages.create({
-                model: 'claude-3-sonnet',
+                model: 'claude-3-5-sonnet-20241022',
                 max_tokens: 1024,
                 temperature: 0,
                 system: "You are a senior software developer performing code reviews. Focus only on critical issues. Be concise and direct.",
