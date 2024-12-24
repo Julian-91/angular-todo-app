@@ -1,0 +1,45 @@
+name: Open AI Code Reviewer
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  code-review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Get PR Diff
+        id: get_diff
+        run: |
+          git fetch origin main
+          DIFF_CONTENT=$(git diff origin/main...HEAD)
+          echo "diff_content<<EOF" >> $GITHUB_OUTPUT
+          echo "$DIFF_CONTENT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Run code reviewer
+        id: run_code_reviewer
+        run: |
+            OUTPUT=$(node frontend/scripts/code-reviewer.mjs ${{ steps.get_diff.outputs.diff_content }})
+            echo "review_response<<EOF" >> $GITHUB_OUTPUT
+            echo "$OUTPUT" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+      - name: Comment PR
+        uses: thollander/actions-comment-pull-request@v3
+        with:
+          message: |
+            ${{ steps.run_code_reviewer.outputs.review_response }}
