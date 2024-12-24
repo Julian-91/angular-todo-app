@@ -15,10 +15,10 @@ jobs:
         with:
           node-version: '20'
           
-      - name: Install review bot dependencies
+      - name: Install dependencies
         working-directory: .github/workflows/review-bot
         run: |
-          npm install @octokit/rest @anthropic-ai/sdk typescript ts-node @types/node
+          npm install
           
       - name: Run AI Review
         working-directory: .github/workflows/review-bot

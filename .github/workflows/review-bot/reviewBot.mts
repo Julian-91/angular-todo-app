@@ -1,14 +1,14 @@
 import { Octokit } from '@octokit/rest';
-import { Client } from '@anthropic-ai/sdk';
+import Anthropic from '@anthropic-ai/sdk';
 
 class EfficientReviewBot {
     private octokit: Octokit;
-    private anthropic: Client;
+    private anthropic: Anthropic;
     private MIN_CHANGES = 5; // Minimum number of changes for review
 
     constructor(githubToken: string, anthropicKey: string) {
         this.octokit = new Octokit({ auth: githubToken });
-        this.anthropic = new Client({ apiKey: anthropicKey });
+        this.anthropic = new Anthropic({ apiKey: anthropicKey });
     }
 
     private cleanDiff(patch: string): string {
@@ -62,10 +62,10 @@ ${diff}
 
 Provide ONLY critical feedback in bullet points. Be brief and concise.`;
 
-        const response = await this.anthropic.messages.create({
-            model: 'claude-3-5-sonnet-20241022',
+        const response = await this.anthropic.beta.messages.create({
+            model: 'claude-3-sonnet',
+            messages: [{ role: 'user', content: prompt }],
             max_tokens: 500, // Limited output
-            messages: [{ role: 'user', content: prompt }]
         });
 
         return response.content[0].text;
