@@ -67,6 +67,80 @@
     /* Light gray */
 }
 
+/* Shared card styling */
+.todo-card {
+    background-color: var(--card-background);
+    box-shadow: var(--card-shadow);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    height: fit-content;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Common responsive layouts */
+@media (max-width: 768px) {
+    .todo-card {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .todo-card {
+        padding: 1rem;
+        border-radius: 0.5rem;
+    }
+}
+
+/* Shared category dot styling */
+.category-dot {
+    display: inline-block;
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    margin-right: 0.5rem;
+
+    &.client-work {
+        background-color: var(--category-client-work);
+    }
+
+    &.personal-work {
+        background-color: var(--category-personal-work);
+    }
+
+    &.personal {
+        background-color: var(--category-personal);
+    }
+
+    &.cooking {
+        background-color: var(--category-cooking);
+    }
+
+    &.others {
+        background-color: var(--category-others);
+    }
+
+    &.general {
+        background-color: var(--category-general);
+    }
+
+    &.work {
+        background-color: var(--category-work);
+    }
+
+    &.shopping {
+        background-color: var(--category-shopping);
+    }
+
+    &.health {
+        background-color: var(--category-health);
+    }
+
+    &.all {
+        background-color: var(--category-all);
+    }
+}
+
 /* Fix for dropdown options display */
 select option {
     padding: 6px 8px !important;
@@ -96,6 +170,32 @@ select option {
     }
 }
 
+/* Standard select styling */
+select {
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-color);
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: var(--card-background);
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23646b8c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1em;
+    padding-right: 2.5rem;
+    cursor: pointer;
+
+    &:hover {
+        border-color: var(--primary-color);
+    }
+
+    &:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px var(--primary-light);
+    }
+}
+
 /* Ensure consistent selection highlight */
 option:checked,
 option:hover {
@@ -105,8 +205,7 @@ option:hover {
 
 /* Global form element styles */
 input,
-textarea,
-select {
+textarea {
     transition: all 0.2s;
     border-radius: 0.5rem;
     border: 1px solid var(--border-color);

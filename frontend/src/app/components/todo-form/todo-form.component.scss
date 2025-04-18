@@ -34,15 +34,11 @@ $form-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
 /* Form card specific styles */
 .form-card {
-    background-color: var(--card-background);
-    box-shadow: 0 4px 6px var(--shadow-color);
-    border-radius: 0.75rem;
-    padding: 1.5rem;
-    max-width: 600px;
-    margin: 0 auto;
     position: sticky;
     top: 1.5rem;
     min-width: 250px;
+    max-width: 600px;
+    margin: 0 auto;
 }
 
 /* Input group */
@@ -55,23 +51,9 @@ $form-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     .title-input {
         width: 100%;
         padding: 12px 16px;
-        border-radius: 0.5rem;
-        border: 1px solid #ddd;
         font-size: 16px;
         box-sizing: border-box;
         height: 42px;
-        outline: none;
-        transition: all 0.2s;
-
-        &:hover {
-            border-color: var(--primary-color);
-        }
-
-        &:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px var(--primary-light);
-        }
     }
 
     .description-area {
@@ -81,65 +63,23 @@ $form-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         textarea {
             width: 100%;
             padding: 12px 16px;
-            border-radius: 0.5rem;
-            border: 1px solid #ddd;
             resize: vertical;
             font-family: inherit;
             font-size: 16px;
             min-height: 80px;
             box-sizing: border-box;
-            outline: none;
-            transition: all 0.2s;
-
-            &:hover {
-                border-color: var(--primary-color);
-            }
-
-            &:focus {
-                outline: none;
-                border-color: var(--primary-color);
-                box-shadow: 0 0 0 3px var(--primary-light);
-            }
         }
     }
 
     select {
         width: 100%;
         padding: 8px 16px;
-        border-radius: 0.5rem;
-        border: 1px solid #ddd;
         font-size: 16px;
         box-sizing: border-box;
-        background-color: #fff;
-        appearance: none;
-        -webkit-appearance: none;
-        -moz-appearance: none;
         height: 42px;
-        outline: none;
-        cursor: pointer;
-        transition: all 0.2s;
-        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23646b8c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-        background-repeat: no-repeat;
-        background-position: right 0.75rem center;
-        background-size: 1em;
-        padding-right: 2.5rem;
-
-        &:hover {
-            border-color: var(--primary-color);
-        }
-
-        &:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px var(--primary-light);
-        }
 
         option {
-            padding: 6px 8px;
-            font-size: 16px;
-            background-color: white;
-            color: #333;
-            line-height: 1.2;
+            color: var(--text-primary);
         }
     }
 
@@ -155,8 +95,7 @@ $form-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
     .add-button {
         padding: 12px 16px;
-        background-color: #3b82f6;
-        /* Primary blue color */
+        background-color: var(--primary-color);
         color: white;
         border: none;
         border-radius: 4px;
@@ -168,8 +107,7 @@ $form-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         height: 42px;
 
         &:hover {
-            background-color: #2563eb;
-            /* Darker blue for hover */
+            background-color: var(--primary-hover);
         }
     }
 }
@@ -196,47 +134,4 @@ $form-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     gap: 0.5rem;
     margin-top: 0.5rem;
     font-size: 0.875rem;
-
-    .category-dot {
-        width: 0.75rem;
-        height: 0.75rem;
-        border-radius: 50%;
-        display: inline-block;
-
-        &.client-work {
-            background-color: var(--category-client-work);
-        }
-
-        &.personal-work {
-            background-color: var(--category-personal-work);
-        }
-
-        &.personal {
-            background-color: var(--category-personal);
-        }
-
-        &.cooking {
-            background-color: var(--category-cooking);
-        }
-
-        &.others {
-            background-color: var(--category-others);
-        }
-
-        &.general {
-            background-color: var(--category-general);
-        }
-
-        &.work {
-            background-color: var(--category-work);
-        }
-
-        &.shopping {
-            background-color: var(--category-shopping);
-        }
-
-        &.health {
-            background-color: var(--category-health);
-        }
-    }
 }
