@@ -1,0 +1,30 @@
+<div class="todo-card form-card">
+    <h2>Add Todo</h2>
+    <div class="input-group">
+        <!-- Title input -->
+        <input type="text" class="title-input" [(ngModel)]="newTodoTitle" placeholder="Add a new todo"
+            (keyup.enter)="addTodo()">
+
+        <!-- Always visible description textarea -->
+        <div class="description-area">
+            <textarea [(ngModel)]="newTodoDescription" placeholder="Add a description (optional)" rows="3"></textarea>
+        </div>
+
+        <!-- Category selection -->
+        <select [(ngModel)]="newTodoCategory">
+            <option value="">Select Category</option>
+            <option *ngFor="let category of categories" [value]="category" class="category-option">
+                {{category}}
+            </option>
+        </select>
+
+        <!-- Show selected category with color indicator -->
+        <div *ngIf="newTodoCategory" class="selected-category">
+            <span class="category-dot" [style.background-color]="getCategoryColor(newTodoCategory)"></span>
+            Selected: {{newTodoCategory}}
+        </div>
+
+        <!-- Add button -->
+        <button (click)="addTodo()" class="add-button">Add</button>
+    </div>
+</div>

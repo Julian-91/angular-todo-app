@@ -1,70 +1,83 @@
-<div class="todo-item">
-    <!-- View Mode -->
+<div class="todo-item" [class.todo-item-editing]="isEditing">
+    <!-- Todo Display Mode -->
     <ng-container *ngIf="!isEditing">
-        <div class="checkbox-wrapper">
-            <input type="checkbox" 
-                   id="todo-checkbox-{{ todo._id }}" 
-                   [checked]="todo.isCompleted" 
-                   (change)="onToggle()" />
-            <span class="checkmark"></span>
-        </div>
-        <div class="todo-content">
-            <label for="todo-checkbox-{{ todo._id }}" 
-                   class="todo-title" 
-                   [ngClass]="{ 'completed': todo.isCompleted }">
-                {{ todo.title }}
+        <div class="checkbox-container">
+            <label class="checkbox-wrapper">
+                <input type="checkbox" [checked]="todo.isCompleted" (change)="onToggle()" />
+                <span class="checkmark"></span>
             </label>
-            <span class="category">{{ todo.category }}</span>
         </div>
+
+        <div class="todo-content">
+            <div class="todo-header">
+                <h3 class="todo-title" [class.completed]="todo.isCompleted" (click)="onToggle()">
+                    {{ todo.title }}
+                </h3>
+                <span *ngIf="todo.category" class="category" [style.background-color]="getCategoryColor(todo.category)"
+                    [style.color]="getCategoryTextColor(todo.category)">
+                    {{ todo.category }}
+                </span>
+            </div>
+
+            <!-- Description toggle and preview -->
+            <div *ngIf="hasDescription()" class="description-container">
+                <div class="description-preview" *ngIf="!isDescriptionExpanded && shouldShowToggle()">
+                    <p>{{ getDescriptionPreview() }}</p>
+                    <button class="show-more-btn" (click)="toggleDescription()">Show more</button>
+                </div>
+                <div class="description-preview" *ngIf="!isDescriptionExpanded && !shouldShowToggle()">
+                    <p>{{ todo.description }}</p>
+                </div>
+                <div class="todo-description" *ngIf="isDescriptionExpanded">
+                    <p>{{ todo.description }}</p>
+                    <button class="show-less-btn" *ngIf="shouldShowToggle()" (click)="toggleDescription()">Show
+                        less</button>
+                </div>
+            </div>
+        </div>
+
         <div class="actions">
-            <button class="action-button edit-button"
-                    (click)="startEditing()" 
-                    aria-label="Edit todo">
-                ✎
+            <button class="action-button edit-button" (click)="startEditing()" title="Edit Todo">
+                <span class="icon">✎</span>
             </button>
-            <button class="action-button delete-button"
-                    (click)="onDelete()" 
-                    aria-label="Delete todo">
-                &#x2715;
+
+            <button class="action-button delete-button" (click)="onDelete()" title="Delete Todo">
+                <span class="icon">✕</span>
             </button>
         </div>
     </ng-container>
 
-    <!-- Edit Mode -->
+    <!-- Todo Edit Mode -->
     <ng-container *ngIf="isEditing">
-        <div class="checkbox-wrapper">
-            <input type="checkbox" disabled
-                   [checked]="todo.isCompleted" />
-            <span class="checkmark"></span>
+        <div class="checkbox-container">
+            <div class="checkbox-wrapper">
+                <input type="checkbox" disabled [checked]="todo.isCompleted" />
+                <span class="checkmark"></span>
+            </div>
         </div>
+
         <div class="edit-form">
-            <input type="text"
-                   class="edit-title"
-                   [ngModel]="editedTitle"
-                   (ngModelChange)="editedTitle = $event"
-                   (keydown)="onKeyDown($event)"
-                   placeholder="Todo title">
-            
-            <select class="edit-category" 
-                    [ngModel]="editedCategory"
-                    (ngModelChange)="editedCategory = $event">
-                <option *ngFor="let category of uniqueCategories" 
-                        [value]="category">
+            <input type="text" class="edit-title" [ngModel]="editedTitle" (ngModelChange)="editedTitle = $event"
+                (keydown)="onKeyDown($event)" placeholder="Todo title" />
+
+            <select class="edit-category" [ngModel]="editedCategory" (ngModelChange)="editedCategory = $event">
+                <option *ngFor="let category of uniqueCategories" [value]="category"
+                    [style.background-color]="getCategoryColor(category)"
+                    [style.color]="getCategoryTextColor(category)">
                     {{category}}
                 </option>
             </select>
 
+            <textarea class="edit-description" [ngModel]="editedDescription"
+                (ngModelChange)="editedDescription = $event" placeholder="Description (optional)" rows="3"></textarea>
+
             <div class="edit-actions">
-                <button class="action-button save-button"
-                        (click)="saveEdits()" 
-                        [disabled]="!editedTitle.trim()"
-                        aria-label="Save changes">
-                    ✓
+                <button class="action-button save-button" (click)="saveEdits()" [disabled]="!editedTitle.trim()"
+                    title="Save changes">
+                    <span class="icon">✓</span>
                 </button>
-                <button class="action-button cancel-button"
-                        (click)="cancelEditing()" 
-                        aria-label="Cancel editing">
-                    ✕
+                <button class="action-button cancel-button" (click)="cancelEditing()" title="Cancel editing">
+                    <span class="icon">✕</span>
                 </button>
             </div>
         </div>

@@ -3,6 +3,7 @@ import { TodoListComponent } from './todo-list.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TodoItemComponent } from '../todo-item/todo-item.component';
+import { TodoFormComponent } from '../todo-form/todo-form.component';
 import { TodoService } from '../../services/todo.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Todo } from '../../models/todo.model';
@@ -12,18 +13,21 @@ const mockTodos: Todo[] = [
     {
         _id: '1',
         title: 'Complete project documentation',
+        description: '',
         isCompleted: false,
         category: 'Work'
     },
     {
         _id: '2',
         title: 'Buy groceries',
+        description: '',
         isCompleted: true,
         category: 'Shopping'
     },
     {
         _id: '3',
         title: 'Exercise',
+        description: '',
         isCompleted: false,
         category: 'Health'
     }
@@ -41,6 +45,7 @@ class MockTodoService {
         const newTodo: Todo = {
             _id: Date.now().toString(),
             title,
+            description: '',
             isCompleted: false,
             category
         };
@@ -77,7 +82,7 @@ const meta: Meta<TodoListComponent> = {
     component: TodoListComponent,
     decorators: [
         moduleMetadata({
-            imports: [CommonModule, FormsModule, TodoItemComponent],
+            imports: [CommonModule, FormsModule, TodoItemComponent, TodoFormComponent],
             providers: [
                 { provide: TodoService, useClass: MockTodoService }
             ],
@@ -106,10 +111,10 @@ export const EmptyState: Story = {
                     provide: TodoService,
                     useValue: {
                         getTodos: () => new BehaviorSubject<Todo[]>([]),
-                        addTodo: () => {},
-                        deleteTodo: () => {},
-                        toggleCompletion: () => {},
-                        updateTodo: () => {}
+                        addTodo: () => { },
+                        deleteTodo: () => { },
+                        toggleCompletion: () => { },
+                        updateTodo: () => { }
                     }
                 }
             ]
@@ -128,13 +133,14 @@ export const ManyTodos: Story = {
                         getTodos: () => new BehaviorSubject<Todo[]>(Array(20).fill(null).map((_, index) => ({
                             _id: index.toString(),
                             title: `Todo item ${index + 1}`,
+                            description: '',
                             isCompleted: index % 3 === 0,
                             category: ['Work', 'Personal', 'Shopping', 'Health'][index % 4]
                         }))),
-                        addTodo: () => {},
-                        deleteTodo: () => {},
-                        toggleCompletion: () => {},
-                        updateTodo: () => {}
+                        addTodo: () => { },
+                        deleteTodo: () => { },
+                        toggleCompletion: () => { },
+                        updateTodo: () => { }
                     }
                 }
             ]
@@ -154,32 +160,36 @@ export const MultipleCategories: Story = {
                             {
                                 _id: '1',
                                 title: 'Work Task 1',
+                                description: '',
                                 isCompleted: false,
                                 category: 'Work'
                             },
                             {
                                 _id: '2',
                                 title: 'Personal Task',
+                                description: '',
                                 isCompleted: true,
                                 category: 'Personal'
                             },
                             {
                                 _id: '3',
                                 title: 'Shopping List',
+                                description: '',
                                 isCompleted: false,
                                 category: 'Shopping'
                             },
                             {
                                 _id: '4',
                                 title: 'Work Task 2',
+                                description: '',
                                 isCompleted: true,
                                 category: 'Work'
                             }
                         ]),
-                        addTodo: () => {},
-                        deleteTodo: () => {},
-                        toggleCompletion: () => {},
-                        updateTodo: () => {}
+                        addTodo: () => { },
+                        deleteTodo: () => { },
+                        toggleCompletion: () => { },
+                        updateTodo: () => { }
                     }
                 }
             ]
@@ -199,26 +209,29 @@ export const AllCompleted: Story = {
                             {
                                 _id: '1',
                                 title: 'Completed Task 1',
+                                description: '',
                                 isCompleted: true,
                                 category: 'Work'
                             },
                             {
                                 _id: '2',
                                 title: 'Completed Task 2',
+                                description: '',
                                 isCompleted: true,
                                 category: 'Personal'
                             },
                             {
                                 _id: '3',
                                 title: 'Completed Task 3',
+                                description: '',
                                 isCompleted: true,
                                 category: 'Shopping'
                             }
                         ]),
-                        addTodo: () => {},
-                        deleteTodo: () => {},
-                        toggleCompletion: () => {},
-                        updateTodo: () => {}
+                        addTodo: () => { },
+                        deleteTodo: () => { },
+                        toggleCompletion: () => { },
+                        updateTodo: () => { }
                     }
                 }
             ]

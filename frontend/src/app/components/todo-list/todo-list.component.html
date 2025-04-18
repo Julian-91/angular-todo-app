@@ -1,44 +1,39 @@
-<div class="todo-app">
-    <!-- Add Todo Form -->
-    <div class="input-group">
-        <input type="text"
-               [(ngModel)]="newTodoTitle"
-               placeholder="Add a new todo"
-               (keyup.enter)="addTodo()">
-        <select [(ngModel)]="newTodoCategory">
-            <option value="">Select Category</option>
-            <option *ngFor="let category of categories" [value]="category">
-                {{category}}
-            </option>
-        </select>
-        <button (click)="addTodo()">Add</button>
-    </div>
+<div class="todo-app-container">
+    <div class="todo-app-grid">
+        <!-- Todo Form Component -->
+        <app-todo-form [categories]="categories" (addTodoEvent)="handleAddTodo($event)">
+        </app-todo-form>
 
-    <!-- Category Filter -->
-    <div class="category-filter">
-        <label>Filter by category:</label>
-        <select [(ngModel)]="selectedCategory">
-            <option value="All">All</option>
-            <option *ngFor="let category of categories" [value]="category">
-                {{category}}
-            </option>
-        </select>
-    </div>
+        <!-- Todo List Card -->
+        <div class="todo-card list-card">
+            <h2>Your Todos</h2>
 
-    <!-- Todo List -->
-    <div class="todos-list">
-        <app-todo-item *ngFor="let todo of filteredTodos"
-                       [todo]="todo"
-                       [availableCategories]="categories"
-                       (delete)="deleteTodo($event)"
-                       (toggle)="toggleCompletion($event)"
-                       (update)="updateTodo($event)">
-        </app-todo-item>
+            <!-- Category Filter -->
+            <div class="category-filter">
+                <label>Filter by category:</label>
+                <div class="select-container">
+                    <select [(ngModel)]="selectedCategory">
+                        <option value="All">All</option>
+                        <option *ngFor="let category of categories" [value]="category">
+                            {{category}}
+                        </option>
+                    </select>
+                    <div class="selected-indicator" [style.background-color]="getCategoryColor(selectedCategory)"></div>
+                </div>
+            </div>
 
-        <!-- Empty State -->
-        <div class="empty-state" *ngIf="filteredTodos.length === 0">
-            <p>No todos found</p>
-            <p *ngIf="selectedCategory !== 'All'">Try changing the category filter</p>
+            <!-- Todo List -->
+            <div class="todos-list">
+                <app-todo-item *ngFor="let todo of filteredTodos" [todo]="todo" [availableCategories]="categories"
+                    (delete)="deleteTodo($event)" (toggle)="toggleCompletion($event)" (update)="updateTodo($event)">
+                </app-todo-item>
+
+                <!-- Empty State -->
+                <div class="empty-state" *ngIf="filteredTodos.length === 0">
+                    <p>No todos found</p>
+                    <p *ngIf="selectedCategory !== 'All'">Try changing the category filter</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>

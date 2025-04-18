@@ -23,8 +23,8 @@ export class TodoService {
     return this.todosSubject.asObservable();
   }
 
-  addTodo(title: string, category: string = 'General'): void {
-    const todoData = { title, category };
+  addTodo(title: string, description: string = '', category: string = 'General'): void {
+    const todoData = { title, description, category };
     this.apiService.addTodo(todoData).subscribe((newTodo) => {
       const currentTodos = this.todosSubject.value;
       this.todosSubject.next([...currentTodos, newTodo]);
