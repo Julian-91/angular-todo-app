@@ -17,11 +17,12 @@ describe('Todo Model Test', () => {
       };
       const todo = new Todo(validTodo);
       const savedTodo = await todo.save();
-      
+
       expect(savedTodo._id).toBeDefined();
       expect(savedTodo.title).toBe(validTodo.title);
       expect(savedTodo.isCompleted).toBe(validTodo.isCompleted);
       expect(savedTodo.category).toBe(validTodo.category);
+      expect(savedTodo.description).toBe('');
     });
 
     it('should use default values when not provided', async () => {
@@ -30,9 +31,35 @@ describe('Todo Model Test', () => {
       };
       const todo = new Todo(todoWithoutOptionals);
       const savedTodo = await todo.save();
-      
+
       expect(savedTodo.isCompleted).toBe(false);
       expect(savedTodo.category).toBe('General');
+      expect(savedTodo.description).toBe('');
+    });
+
+    it('should store description correctly when provided', async () => {
+      const todoWithDescription = {
+        title: 'Test Todo',
+        description: 'This is a test description',
+        isCompleted: false,
+        category: 'Work'
+      };
+      const todo = new Todo(todoWithDescription);
+      const savedTodo = await todo.save();
+
+      expect(savedTodo.description).toBe(todoWithDescription.description);
+    });
+
+    it('should update description correctly', async () => {
+      const todo = new Todo({
+        title: 'Original Title'
+      });
+      const savedTodo = await todo.save();
+      expect(savedTodo.description).toBe('');
+
+      savedTodo.description = 'Updated description';
+      const updatedTodo = await savedTodo.save();
+      expect(updatedTodo.description).toBe('Updated description');
     });
 
     it('should fail validation when title is empty', async () => {
@@ -40,7 +67,7 @@ describe('Todo Model Test', () => {
         isCompleted: false,
         category: 'Work'
       };
-      
+
       let err: MongooseError | null = null;
       try {
         const todo = new Todo(todoWithoutTitle);
@@ -48,7 +75,7 @@ describe('Todo Model Test', () => {
       } catch (error) {
         err = error as MongooseError;
       }
-      
+
       expect(err).toBeInstanceOf(mongoose.Error.ValidationError);
       expect(err?.errors.title).toBeDefined();
     });
@@ -59,7 +86,7 @@ describe('Todo Model Test', () => {
         isCompleted: false,
         category: 'Work'
       };
-      
+
       let err: MongooseError | null = null;
       try {
         const todo = new Todo(todoWithNullTitle);
@@ -67,7 +94,7 @@ describe('Todo Model Test', () => {
       } catch (error) {
         err = error as MongooseError;
       }
-      
+
       expect(err).toBeInstanceOf(mongoose.Error.ValidationError);
       expect(err?.errors.title).toBeDefined();
     });
@@ -79,7 +106,7 @@ describe('Todo Model Test', () => {
         category: 'Work'
       });
       const savedTodo = await todo.save();
-      
+
       expect(typeof savedTodo.isCompleted).toBe('boolean');
       expect(savedTodo.isCompleted).toBe(true);
     });
@@ -90,11 +117,11 @@ describe('Todo Model Test', () => {
         category: 'Personal'
       });
       const savedTodo = await todo.save();
-      
+
       savedTodo.title = 'Updated Title';
       savedTodo.category = 'Work';
       const updatedTodo = await savedTodo.save();
-      
+
       expect(updatedTodo.title).toBe('Updated Title');
       expect(updatedTodo.category).toBe('Work');
     });
@@ -106,7 +133,7 @@ describe('Todo Model Test', () => {
       };
       const todo = new Todo(todoWithEmptyCategory);
       const savedTodo = await todo.save();
-      
+
       expect(savedTodo.category).toBe('General');
     });
   });

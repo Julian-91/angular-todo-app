@@ -1,1 +1,231 @@
 /* You can add global styles to this file, and also import other style files */
+
+/* Global color variables */
+:root {
+    /* Primary colors */
+    --primary-color: #3b82f6;
+    /* Primary blue */
+    --primary-hover: #2563eb;
+    /* Darker blue for hover */
+    --primary-light: rgba(59, 130, 246, 0.1);
+    /* Light blue for hover effects */
+
+    /* Text colors */
+    --text-primary: #1e293b;
+    /* Main text color */
+    --text-secondary: #64748b;
+    /* Secondary text color */
+    --text-tertiary: #94a3b8;
+    /* Tertiary text color */
+    --text-completed: #9ca3af;
+    /* Completed todo text color */
+
+    /* UI colors */
+    --background-color: #f8fafc;
+    /* Background color */
+    --card-background: #ffffff;
+    /* Card background */
+    --border-color: #e2e8f0;
+    /* Border color */
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    /* Shadow color */
+
+    /* Shadow values */
+    --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+    --form-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+
+    /* Status colors */
+    --danger-color: #ef4444;
+    /* Red for delete actions */
+    --danger-hover: #dc2626;
+    /* Darker red for hover */
+    --success-color: #10b981;
+    /* Green for success/save actions */
+    --success-hover: #059669;
+    /* Darker green for hover */
+
+    /* Category colors - standard and accessible */
+    --category-client-work: #ff6b6b;
+    /* Coral red */
+    --category-personal-work: #4ecdc4;
+    /* Teal */
+    --category-personal: #ffbe76;
+    /* Light orange */
+    --category-cooking: #7bed9f;
+    /* Light green */
+    --category-others: #a29bfe;
+    /* Lavender */
+    --category-general: #74b9ff;
+    /* Sky blue */
+    --category-work: #ff9f7f;
+    /* Salmon */
+    --category-shopping: #ff7675;
+    /* Pastel red */
+    --category-health: #55efc4;
+    /* Mint */
+    --category-all: #cbd5e0;
+    /* Light gray */
+}
+
+/* Shared card styling */
+.todo-card {
+    background-color: var(--card-background);
+    box-shadow: var(--card-shadow);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    height: fit-content;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Common responsive layouts */
+@media (max-width: 768px) {
+    .todo-card {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .todo-card {
+        padding: 1rem;
+        border-radius: 0.5rem;
+    }
+}
+
+/* Shared category dot styling */
+.category-dot {
+    display: inline-block;
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    margin-right: 0.5rem;
+
+    &.client-work {
+        background-color: var(--category-client-work);
+    }
+
+    &.personal-work {
+        background-color: var(--category-personal-work);
+    }
+
+    &.personal {
+        background-color: var(--category-personal);
+    }
+
+    &.cooking {
+        background-color: var(--category-cooking);
+    }
+
+    &.others {
+        background-color: var(--category-others);
+    }
+
+    &.general {
+        background-color: var(--category-general);
+    }
+
+    &.work {
+        background-color: var(--category-work);
+    }
+
+    &.shopping {
+        background-color: var(--category-shopping);
+    }
+
+    &.health {
+        background-color: var(--category-health);
+    }
+
+    &.all {
+        background-color: var(--category-all);
+    }
+}
+
+/* Fix for dropdown options display */
+select option {
+    padding: 6px 8px !important;
+    background-color: white !important;
+    color: var(--text-primary) !important;
+    line-height: 1.2 !important;
+    height: auto !important;
+    min-height: 20px !important;
+}
+
+/* Fix for webkit browsers (Chrome, Safari) */
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    select {
+        text-indent: 2px;
+    }
+
+    select option {
+        padding: 4px 8px !important;
+        margin: 2px 0 !important;
+    }
+}
+
+/* Fix for Firefox */
+@-moz-document url-prefix() {
+    select option {
+        padding: 3px 8px !important;
+    }
+}
+
+/* Standard select styling */
+select {
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-color);
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: var(--card-background);
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23646b8c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1em;
+    padding-right: 2.5rem;
+    cursor: pointer;
+
+    &:hover {
+        border-color: var(--primary-color);
+    }
+
+    &:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px var(--primary-light);
+    }
+}
+
+/* Ensure consistent selection highlight */
+option:checked,
+option:hover {
+    background-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Global form element styles */
+input,
+textarea {
+    transition: all 0.2s;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-color);
+    outline: none;
+
+    &:hover {
+        border-color: var(--primary-color);
+    }
+
+    &:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px var(--primary-light);
+    }
+}
+
+/* Consistent button styles */
+button {
+    transition: all 0.2s;
+
+    &:focus {
+        outline: none;
+    }
+}

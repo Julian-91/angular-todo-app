@@ -3,6 +3,7 @@ import { TodoListComponent } from './todo-list.component';
 import { TodoService } from '../../services/todo.service';
 import { FormsModule } from '@angular/forms';
 import { TodoItemComponent } from '../todo-item/todo-item.component';
+import { TodoFormComponent } from '../todo-form/todo-form.component';
 import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
 import { Todo } from '../../models/todo.model';
@@ -13,8 +14,8 @@ describe('TodoListComponent', () => {
   let todoService: jest.Mocked<TodoService>;
 
   const mockTodos: Todo[] = [
-    { _id: '1', title: 'Test Todo 1', isCompleted: false, category: 'Work' },
-    { _id: '2', title: 'Test Todo 2', isCompleted: true, category: 'Personal' }
+    { _id: '1', title: 'Test Todo 1', description: '', isCompleted: false, category: 'Work' },
+    { _id: '2', title: 'Test Todo 2', description: '', isCompleted: true, category: 'Personal' }
   ];
 
   beforeEach(async () => {
@@ -22,7 +23,8 @@ describe('TodoListComponent', () => {
       getTodos: jest.fn(),
       addTodo: jest.fn(),
       deleteTodo: jest.fn(),
-      toggleCompletion: jest.fn()
+      toggleCompletion: jest.fn(),
+      updateTodo: jest.fn()
     };
 
     todoServiceMock.getTodos.mockReturnValue(of(mockTodos));
@@ -31,7 +33,8 @@ describe('TodoListComponent', () => {
       imports: [
         FormsModule,
         TodoListComponent,
-        TodoItemComponent
+        TodoItemComponent,
+        TodoFormComponent
       ],
       providers: [
         { provide: TodoService, useValue: todoServiceMock }
@@ -53,46 +56,21 @@ describe('TodoListComponent', () => {
     expect(component.todos).toEqual(mockTodos);
   });
 
-  describe('Adding todos', () => {
-    it('should add todo when title is not empty', () => {
-      component.newTodoTitle = '  New Todo  ';
-      component.newTodoCategory = 'Work';
-
-      component.addTodo();
-
-      expect(todoService.addTodo).toHaveBeenCalledWith('New Todo', 'Work');
-      expect(component.newTodoTitle).toBe('');
-      expect(component.newTodoCategory).toBe('');
-    });
-
-    it('should not add todo when title is empty or only whitespace', () => {
-      component.newTodoTitle = '   ';
-      component.addTodo();
-
-      expect(todoService.addTodo).not.toHaveBeenCalled();
-    });
-
-    it('should use "General" category when no category is specified', () => {
-      component.newTodoTitle = 'New Todo';
-      component.newTodoCategory = '';
-
-      component.addTodo();
-
-      expect(todoService.addTodo).toHaveBeenCalledWith('New Todo', 'General');
-    });
-
-    it('should add todo on enter key press', () => {
-      component.newTodoTitle = 'New Todo';
-
-      const input = fixture.debugElement.query(By.css('input[type="text"]'));
-      const enterEvent = new KeyboardEvent('keyup', { key: 'Enter' });
-      input.nativeElement.dispatchEvent(enterEvent);
-
-      expect(todoService.addTodo).toHaveBeenCalled();
-    });
-  });
-
   describe('Todo actions', () => {
+    it('should handle adding todo from form component', () => {
+      component.handleAddTodo({
+        title: 'New Todo',
+        description: '',
+        category: 'Work'
+      });
+
+      expect(todoService.addTodo).toHaveBeenCalledWith(
+        'New Todo',
+        '',
+        'Work'
+      );
+    });
+
     it('should delete todo', () => {
       component.deleteTodo('1');
       expect(todoService.deleteTodo).toHaveBeenCalledWith('1');
@@ -101,6 +79,23 @@ describe('TodoListComponent', () => {
     it('should toggle todo completion', () => {
       component.toggleCompletion('1');
       expect(todoService.toggleCompletion).toHaveBeenCalledWith('1');
+    });
+
+    it('should update todo', () => {
+      component.updateTodo({
+        id: '1',
+        updates: {
+          title: 'Updated Title',
+          description: 'Updated Description',
+          category: 'Updated Category'
+        }
+      });
+
+      expect(todoService.updateTodo).toHaveBeenCalledWith('1', {
+        title: 'Updated Title',
+        description: 'Updated Description',
+        category: 'Updated Category'
+      });
     });
   });
 
@@ -142,6 +137,7 @@ describe('TodoListComponent', () => {
       const newTodo: Todo = {
         _id: '3',
         title: 'New Todo',
+        description: '',
         isCompleted: false,
         category: 'NewCategory'
       };
@@ -173,6 +169,20 @@ describe('TodoListComponent', () => {
       const todoItemComponent = firstTodoItem.componentInstance;
 
       expect(todoItemComponent.todo).toEqual(mockTodos[0]);
+    });
+  });
+
+  describe('Todo form integration', () => {
+    it('should render todo-form component', () => {
+      const todoForm = fixture.debugElement.query(By.directive(TodoFormComponent));
+      expect(todoForm).toBeTruthy();
+    });
+
+    it('should pass categories to todo-form component', () => {
+      const todoForm = fixture.debugElement.query(By.directive(TodoFormComponent));
+      const todoFormComponent = todoForm.componentInstance;
+
+      expect(todoFormComponent.categories).toEqual(component.categories);
     });
   });
 });

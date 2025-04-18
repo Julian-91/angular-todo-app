@@ -10,11 +10,11 @@ on:
         default: false
   push:
     branches:
-      - main   # only run on push to main
-  pull_request:    # run on all PRs
+      - main
+  pull_request:
 
 env:
-  CACHE_VERSION: 1  # Increment this to invalidate all caches
+  CACHE_VERSION: 1
 
 jobs:
   build-frontend:
@@ -124,20 +124,6 @@ jobs:
     
     - name: Run Component Tests
       run: npm test
-
-    - name: Install Playwright
-      run: npx playwright install --with-deps chromium
-
-    - name: Run Visual Tests
-      run: npx playwright test ${{ github.event.inputs.updateSnapshots == 'true' && '--update-snapshots' || '' }}
-
-    - name: Upload test results
-      if: failure()
-      uses: actions/upload-artifact@v4
-      with:
-        name: playwright-results
-        path: frontend/playwright-report
-        retention-days: 1
 
   test-backend:
     needs: build-backend

@@ -10,6 +10,7 @@ type AsyncRequestHandler<P = {}, ResBody = any, ReqBody = any> = (
 
 interface TodoBody {
     title?: string;
+    description?: string;
     isCompleted?: boolean;
     category?: string;
 }
@@ -32,7 +33,7 @@ const getAllTodos: AsyncRequestHandler = async (_req, res) => {
 
 // POST create a new todo
 const createTodo: AsyncRequestHandler<{}, any, TodoBody> = async (req, res) => {
-    const { title, isCompleted, category } = req.body;
+    const { title, description, isCompleted, category } = req.body;
 
     // Validate required fields
     if (!title || title.trim().length === 0) {
@@ -43,6 +44,7 @@ const createTodo: AsyncRequestHandler<{}, any, TodoBody> = async (req, res) => {
     try {
         const todo = new Todo({
             title,
+            description: description || '',
             isCompleted: isCompleted || false,
             category: category || 'General',
         });
@@ -77,7 +79,7 @@ const deleteTodo: AsyncRequestHandler<TodoParams> = async (req, res) => {
 
 // PATCH update a todo
 const updateTodo: AsyncRequestHandler<TodoParams, any, TodoBody> = async (req, res) => {
-    const { title, isCompleted, category } = req.body;
+    const { title, description, isCompleted, category } = req.body;
 
     try {
         // Validate ObjectId
@@ -102,6 +104,7 @@ const updateTodo: AsyncRequestHandler<TodoParams, any, TodoBody> = async (req, r
         // Build update object with only provided fields
         const updateData: TodoBody = {};
         if (title !== undefined) updateData.title = title.trim();
+        if (description !== undefined) updateData.description = description;
         if (isCompleted !== undefined) updateData.isCompleted = isCompleted;
         if (category !== undefined) updateData.category = category;
 
@@ -109,7 +112,7 @@ const updateTodo: AsyncRequestHandler<TodoParams, any, TodoBody> = async (req, r
         const updatedTodo = await Todo.findByIdAndUpdate(
             req.params.id,
             updateData,
-            { 
+            {
                 new: true,          // Return the updated document
                 runValidators: true // Run model validators
             }

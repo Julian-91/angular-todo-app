@@ -9,8 +9,8 @@ describe('TodoService', () => {
   let apiService: jest.Mocked<TodoApiService>;
 
   const mockTodos: Todo[] = [
-    { _id: '1', title: 'Test Todo 1', isCompleted: false, category: 'General' },
-    { _id: '2', title: 'Test Todo 2', isCompleted: true, category: 'Work' }
+    { _id: '1', title: 'Test Todo 1', description: '', isCompleted: false, category: 'General' },
+    { _id: '2', title: 'Test Todo 2', description: '', isCompleted: true, category: 'Work' }
   ];
 
   beforeEach(() => {
@@ -57,6 +57,7 @@ describe('TodoService', () => {
       const newTodo: Todo = {
         _id: '3',
         title: 'New Todo',
+        description: '',
         isCompleted: false,
         category: 'General'
       };
@@ -66,7 +67,31 @@ describe('TodoService', () => {
 
       expect(apiService.addTodo).toHaveBeenCalledWith({
         title: 'New Todo',
+        description: '',
         category: 'General'
+      });
+
+      service.getTodos().subscribe(todos => {
+        expect(todos).toContainEqual(newTodo);
+      });
+    });
+
+    it('should add a todo with description', () => {
+      const newTodo: Todo = {
+        _id: '3',
+        title: 'New Todo',
+        description: 'Test description',
+        isCompleted: false,
+        category: 'Work'
+      };
+      apiService.addTodo.mockReturnValue(of(newTodo));
+
+      service.addTodo('New Todo', 'Test description', 'Work');
+
+      expect(apiService.addTodo).toHaveBeenCalledWith({
+        title: 'New Todo',
+        description: 'Test description',
+        category: 'Work'
       });
 
       service.getTodos().subscribe(todos => {
