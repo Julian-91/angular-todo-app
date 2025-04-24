@@ -1,10 +1,18 @@
 import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { provideRouter } from '@angular/router';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AppComponent],
+      imports: [
+        AppComponent
+      ],
+      providers: [
+        provideRouter([])
+      ],
+      schemas: [NO_ERRORS_SCHEMA] // Ignore unknown elements like app-header
     }).compileComponents();
   });
 

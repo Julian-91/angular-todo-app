@@ -4,13 +4,12 @@ import { CommonModule } from '@angular/common';
 import { TodoService } from '../../services/todo.service';
 import { Todo } from '../../models/todo.model';
 import { TodoItemComponent } from '../todo-item/todo-item.component';
-import { TodoFormComponent } from '../todo-form/todo-form.component';
 import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-todo-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, TodoItemComponent, TodoFormComponent],
+  imports: [CommonModule, FormsModule, TodoItemComponent],
   templateUrl: './todo-list.component.html',
   styleUrl: './todo-list.component.scss'
 })
@@ -44,14 +43,6 @@ export class TodoListComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
-  }
-
-  handleAddTodo(todoData: { title: string; description: string; category: string }): void {
-    this.todoService.addTodo(
-      todoData.title,
-      todoData.description,
-      todoData.category
-    );
   }
 
   deleteTodo(id: string): void {

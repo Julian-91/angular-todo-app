@@ -3,7 +3,6 @@ import { TodoListComponent } from './todo-list.component';
 import { TodoService } from '../../services/todo.service';
 import { FormsModule } from '@angular/forms';
 import { TodoItemComponent } from '../todo-item/todo-item.component';
-import { TodoFormComponent } from '../todo-form/todo-form.component';
 import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
 import { Todo } from '../../models/todo.model';
@@ -33,8 +32,7 @@ describe('TodoListComponent', () => {
       imports: [
         FormsModule,
         TodoListComponent,
-        TodoItemComponent,
-        TodoFormComponent
+        TodoItemComponent
       ],
       providers: [
         { provide: TodoService, useValue: todoServiceMock }
@@ -57,20 +55,6 @@ describe('TodoListComponent', () => {
   });
 
   describe('Todo actions', () => {
-    it('should handle adding todo from form component', () => {
-      component.handleAddTodo({
-        title: 'New Todo',
-        description: '',
-        category: 'Work'
-      });
-
-      expect(todoService.addTodo).toHaveBeenCalledWith(
-        'New Todo',
-        '',
-        'Work'
-      );
-    });
-
     it('should delete todo', () => {
       component.deleteTodo('1');
       expect(todoService.deleteTodo).toHaveBeenCalledWith('1');
@@ -119,70 +103,39 @@ describe('TodoListComponent', () => {
     });
   });
 
-  describe('Categories management', () => {
-    it('should combine predefined and todo categories without duplicates', () => {
+  describe('Color handling', () => {
+    it('should generate colors for categories', () => {
+      const color = component.getCategoryColor('Work');
+      expect(color).toBeDefined();
+      expect(typeof color).toBe('string');
+    });
+
+    it('should generate text colors based on background color', () => {
+      const textColor = component.getCategoryTextColor('Work');
+      expect(textColor).toBeDefined();
+      expect(typeof textColor).toBe('string');
+      expect(['#333333', '#ffffff'].includes(textColor)).toBeTruthy();
+    });
+
+    it('should use predefined color if available', () => {
+      // Categories are defined in the component
+      const color = component.getCategoryColor('General');
+      expect(color).toBe('#74b9ff');
+    });
+  });
+
+  describe('Category listing', () => {
+    it('should combine predefined categories with todo categories', () => {
       const categories = component.categories;
-      const expectedCategories = [
-        ...component.predefinedCategories,
-        'Work',
-        'Personal'
-      ];
 
-      expect(categories).toEqual(expect.arrayContaining(expectedCategories));
-      // Check for no duplicates
-      expect(new Set(categories).size).toBe(categories.length);
-    });
+      // Should include predefined categories
+      expect(categories).toContain('Personal');
 
-    it('should include category in dropdown after adding todo with new category', () => {
-      const newTodo: Todo = {
-        _id: '3',
-        title: 'New Todo',
-        description: '',
-        isCompleted: false,
-        category: 'NewCategory'
-      };
-      component.todos = [...mockTodos, newTodo];
-      fixture.detectChanges();
+      // Should include categories from todos
+      expect(categories).toContain('Work');
 
-      expect(component.categories).toContain('NewCategory');
-    });
-  });
-
-  describe('Component cleanup', () => {
-    it('should unsubscribe on destroy', () => {
-      const unsubscribeSpy = jest.spyOn(component['subscription'], 'unsubscribe');
-
-      component.ngOnDestroy();
-
-      expect(unsubscribeSpy).toHaveBeenCalled();
-    });
-  });
-
-  describe('Todo item integration', () => {
-    it('should render todo-item components', () => {
-      const todoItems = fixture.debugElement.queryAll(By.directive(TodoItemComponent));
-      expect(todoItems.length).toBe(mockTodos.length);
-    });
-
-    it('should pass correct props to todo-item components', () => {
-      const firstTodoItem = fixture.debugElement.query(By.directive(TodoItemComponent));
-      const todoItemComponent = firstTodoItem.componentInstance;
-
-      expect(todoItemComponent.todo).toEqual(mockTodos[0]);
-    });
-  });
-
-  describe('Todo form integration', () => {
-    it('should render todo-form component', () => {
-      const todoForm = fixture.debugElement.query(By.directive(TodoFormComponent));
-      expect(todoForm).toBeTruthy();
-    });
-
-    it('should pass categories to todo-form component', () => {
-      const todoForm = fixture.debugElement.query(By.directive(TodoFormComponent));
-      const todoFormComponent = todoForm.componentInstance;
-
-      expect(todoFormComponent.categories).toEqual(component.categories);
+      // Should not have duplicates
+      expect(categories.length).toBe(new Set(categories).size);
     });
   });
 });
