@@ -2,14 +2,21 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TodoFormComponent } from './todo-form.component';
 import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 
 describe('TodoFormComponent', () => {
   let component: TodoFormComponent;
   let fixture: ComponentFixture<TodoFormComponent>;
+  let routerMock: { navigate: jest.Mock };
 
   beforeEach(async () => {
+    routerMock = { navigate: jest.fn() };
+
     await TestBed.configureTestingModule({
-      imports: [TodoFormComponent, FormsModule]
+      imports: [TodoFormComponent, FormsModule],
+      providers: [
+        { provide: Router, useValue: routerMock }
+      ]
     })
       .compileComponents();
 
@@ -126,5 +133,34 @@ describe('TodoFormComponent', () => {
     titleInput.triggerEventHandler('keyup.enter', {});
 
     expect(addTodoSpy).toHaveBeenCalled();
+  });
+
+  describe('Navigation Behavior', () => {
+    it('should navigate to home when navigateToListAfterAdd is true', () => {
+      component.navigateToListAfterAdd = true;
+      component.newTodoTitle = 'Test Todo';
+
+      component.addTodo();
+
+      expect(routerMock.navigate).toHaveBeenCalledWith(['/']);
+    });
+
+    it('should not navigate when navigateToListAfterAdd is false', () => {
+      component.navigateToListAfterAdd = false;
+      component.newTodoTitle = 'Test Todo';
+
+      component.addTodo();
+
+      expect(routerMock.navigate).not.toHaveBeenCalled();
+    });
+
+    it('should not navigate when form is invalid', () => {
+      component.navigateToListAfterAdd = true;
+      component.newTodoTitle = '';
+
+      component.addTodo();
+
+      expect(routerMock.navigate).not.toHaveBeenCalled();
+    });
   });
 });

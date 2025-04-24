@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-todo-form',
@@ -11,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class TodoFormComponent {
   @Input() categories: string[] = [];
+  @Input() navigateToListAfterAdd: boolean = false;
   @Output() addTodoEvent = new EventEmitter<{
     title: string;
     description: string;
@@ -34,6 +36,8 @@ export class TodoFormComponent {
   newTodoDescription = '';
   newTodoCategory = '';
 
+  constructor(private router: Router) { }
+
   addTodo(): void {
     if (this.newTodoTitle.trim()) {
       const category = this.newTodoCategory.trim() || 'General';
@@ -43,6 +47,11 @@ export class TodoFormComponent {
         category
       });
       this.resetForm();
+
+      // Only navigate if explicitly requested
+      if (this.navigateToListAfterAdd) {
+        this.router.navigate(['/']);
+      }
     }
   }
 
