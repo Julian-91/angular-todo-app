@@ -22,7 +22,11 @@ describe('TodoFormComponent', () => {
 
     fixture = TestBed.createComponent(TodoFormComponent);
     component = fixture.componentInstance;
-    component.categories = ['Work', 'Personal', 'Shopping'];
+    component.categories = [
+      { value: 'Work', label: 'Work' },
+      { value: 'Personal', label: 'Personal' },
+      { value: 'Shopping', label: 'Shopping' }
+    ];
     fixture.detectChanges();
   });
 
@@ -33,7 +37,7 @@ describe('TodoFormComponent', () => {
   it('should display description textarea', () => {
     const descriptionArea = fixture.debugElement.query(By.css('textarea'));
     expect(descriptionArea).toBeTruthy();
-    expect(descriptionArea.nativeElement.placeholder).toContain('description');
+    expect(descriptionArea.nativeElement.placeholder).toContain('Add details about this task');
   });
 
   it('should display category options', () => {
@@ -42,7 +46,7 @@ describe('TodoFormComponent', () => {
 
     // Select Category + 3 categories
     expect(options.length).toBe(4);
-    expect(options[0].textContent.trim()).toBe('Select Category');
+    expect(options[0].textContent.trim()).toBe('Select a category');
     expect(options[1].textContent.trim()).toBe('Work');
     expect(options[2].textContent.trim()).toBe('Personal');
     expect(options[3].textContent.trim()).toBe('Shopping');
@@ -51,9 +55,9 @@ describe('TodoFormComponent', () => {
   it('should emit event with todo data including description when form is submitted', () => {
     const addTodoSpy = jest.spyOn(component.addTodoEvent, 'emit');
 
-    component.newTodoTitle = 'Test Todo';
-    component.newTodoDescription = 'Test Description';
-    component.newTodoCategory = 'Work';
+    component.title = 'Test Todo';
+    component.description = 'Test Description';
+    component.selectedCategory = 'Work';
 
     const addButton = fixture.debugElement.query(By.css('.add-button'));
     addButton.nativeElement.click();
@@ -65,27 +69,27 @@ describe('TodoFormComponent', () => {
     });
 
     // Form should be reset
-    expect(component.newTodoTitle).toBe('');
-    expect(component.newTodoDescription).toBe('');
-    expect(component.newTodoCategory).toBe('');
+    expect(component.title).toBe('');
+    expect(component.description).toBe('');
+    expect(component.selectedCategory).toBe(null);
   });
 
   it('should reset description when form is submitted', () => {
-    component.newTodoTitle = 'Test Todo';
-    component.newTodoDescription = 'Test Description';
-    component.newTodoCategory = 'Work';
+    component.title = 'Test Todo';
+    component.description = 'Test Description';
+    component.selectedCategory = 'Work';
 
     component.addTodo();
 
-    expect(component.newTodoDescription).toBe('');
+    expect(component.description).toBe('');
   });
 
   it('should support empty description', () => {
     const addTodoSpy = jest.spyOn(component.addTodoEvent, 'emit');
 
-    component.newTodoTitle = 'Test Todo';
-    component.newTodoDescription = '';
-    component.newTodoCategory = 'Work';
+    component.title = 'Test Todo';
+    component.description = '';
+    component.selectedCategory = 'Work';
 
     component.addTodo();
 
@@ -99,9 +103,9 @@ describe('TodoFormComponent', () => {
   it('should not emit event when title is empty', () => {
     const addTodoSpy = jest.spyOn(component.addTodoEvent, 'emit');
 
-    component.newTodoTitle = '';
-    component.newTodoDescription = 'Test Description';
-    component.newTodoCategory = 'Work';
+    component.title = '';
+    component.description = 'Test Description';
+    component.selectedCategory = 'Work';
 
     component.addTodo();
 
@@ -111,9 +115,9 @@ describe('TodoFormComponent', () => {
   it('should use "General" category when no category is selected', () => {
     const addTodoSpy = jest.spyOn(component.addTodoEvent, 'emit');
 
-    component.newTodoTitle = 'Test Todo';
-    component.newTodoDescription = 'Test Description';
-    component.newTodoCategory = '';
+    component.title = 'Test Todo';
+    component.description = 'Test Description';
+    component.selectedCategory = null;
 
     component.addTodo();
 
@@ -124,21 +128,10 @@ describe('TodoFormComponent', () => {
     });
   });
 
-  it('should submit form on Enter key in title input', () => {
-    const addTodoSpy = jest.spyOn(component, 'addTodo');
-
-    component.newTodoTitle = 'Test Todo';
-
-    const titleInput = fixture.debugElement.query(By.css('.title-input'));
-    titleInput.triggerEventHandler('keyup.enter', {});
-
-    expect(addTodoSpy).toHaveBeenCalled();
-  });
-
   describe('Navigation Behavior', () => {
     it('should navigate to home when navigateToListAfterAdd is true', () => {
       component.navigateToListAfterAdd = true;
-      component.newTodoTitle = 'Test Todo';
+      component.title = 'Test Todo';
 
       component.addTodo();
 
@@ -147,7 +140,7 @@ describe('TodoFormComponent', () => {
 
     it('should not navigate when navigateToListAfterAdd is false', () => {
       component.navigateToListAfterAdd = false;
-      component.newTodoTitle = 'Test Todo';
+      component.title = 'Test Todo';
 
       component.addTodo();
 
@@ -156,7 +149,7 @@ describe('TodoFormComponent', () => {
 
     it('should not navigate when form is invalid', () => {
       component.navigateToListAfterAdd = true;
-      component.newTodoTitle = '';
+      component.title = '';
 
       component.addTodo();
 

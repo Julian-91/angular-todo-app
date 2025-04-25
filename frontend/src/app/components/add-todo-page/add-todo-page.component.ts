@@ -3,59 +3,54 @@ import { CommonModule } from '@angular/common';
 import { TodoFormComponent } from '../todo-form/todo-form.component';
 import { TodoService } from '../../services/todo.service';
 import { Subscription } from 'rxjs';
-import { Todo } from '../../models/todo.model';
+
+interface CategoryOption {
+  value: string;
+  label: string;
+}
 
 @Component({
   selector: 'app-add-todo-page',
   standalone: true,
   imports: [CommonModule, TodoFormComponent],
   template: `
-    <div class="add-todo-page-container">
-      <div class="todo-card">
-        <h2>Add Todo</h2>
-        
-        <!-- Success message -->
-        <div *ngIf="showSuccessMessage" class="success-message">
-          <div class="success-icon">✓</div>
-          <div class="success-text">Todo added successfully!</div>
-        </div>
-        
-        <app-todo-form
-          [categories]="categories"
-          [navigateToListAfterAdd]="false"
-          (addTodoEvent)="handleAddTodo($event)">
-        </app-todo-form>
+    <div class="page-container">
+      <h2 class="page-title">Add Todo</h2>
+      <app-todo-form
+        [categories]="categoryOptions"
+        [navigateToListAfterAdd]="false"
+        (addTodoEvent)="handleAddTodo($event)">
+      </app-todo-form>
+      
+      <!-- Success message -->
+      <div *ngIf="showSuccessMessage" class="success-message">
+        <div class="success-icon">✓</div>
+        <div class="success-text">Todo added successfully!</div>
       </div>
     </div>
   `,
   styles: [`
     :host {
       font-family: system-ui, -apple-system, sans-serif;
+      display: block;
     }
     
-    .add-todo-page-container {
-      max-width: 800px;
+    .page-container {
+      max-width: 600px;
       margin: 2rem auto;
-      padding: 0 1rem;
+      padding: 0 1.5rem;
     }
-
-    .todo-card {
-      background-color: #ffffff;
-      border-radius: 12px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-      padding: 1.5rem;
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    h2 {
-      font-size: 1.25rem;
+    
+    .page-title {
+      font-size: 1.75rem;
       font-weight: 600;
       color: #1e293b;
       margin-top: 0;
-      margin-bottom: 1.25rem;
-      padding-bottom: 0.75rem;
-      border-bottom: 1px solid #e2e8f0;
+      margin-bottom: 1.5rem;
+      text-align: left;
+      padding-left: 0;
+      letter-spacing: -0.5px;
+      border-bottom: 0 !important;
     }
     
     .success-message {
@@ -66,7 +61,7 @@ import { Todo } from '../../models/todo.model';
       color: #047857;
       padding: 0.75rem 1rem;
       border-radius: 6px;
-      margin-bottom: 1.25rem;
+      margin: 1rem auto;
       animation: fadeInOut 5s forwards;
     }
     
@@ -96,15 +91,36 @@ import { Todo } from '../../models/todo.model';
     }
 
     @media (max-width: 768px) {
-      .add-todo-page-container {
-        margin: 1rem auto;
+      .page-title {
+        font-size: 1.75rem;
+        margin: 1.5rem 0 1rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .page-container {
+        padding: 0 1rem;
+      }
+      
+      .page-title {
+        font-size: 1.5rem;
+        margin: 1rem 0 0.75rem;
       }
     }
   `]
 })
 export class AddTodoPageComponent implements OnInit, OnDestroy {
-  categories: string[] = [];
-  private predefinedCategories = ['Client work', 'Personal work', 'Personal', 'Cooking', 'Others'];
+  categoryOptions: CategoryOption[] = [];
+  private predefinedCategories: string[] = [
+    'Client work',
+    'Personal work',
+    'Personal',
+    'Cooking',
+    'Work',
+    'Shopping',
+    'Health',
+    'Others'
+  ];
   private subscription: Subscription | null = null;
   showSuccessMessage = false;
 
@@ -112,8 +128,15 @@ export class AddTodoPageComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscription = this.todoService.getTodos().subscribe(todos => {
+      // Get unique categories from existing todos
       const todoCategories = todos.map(todo => todo.category);
-      this.categories = Array.from(new Set([...this.predefinedCategories, ...todoCategories]));
+      const uniqueCategories = Array.from(new Set([...this.predefinedCategories, ...todoCategories]));
+
+      // Map to category options format
+      this.categoryOptions = uniqueCategories.map(category => ({
+        value: category,
+        label: category
+      }));
     });
   }
 

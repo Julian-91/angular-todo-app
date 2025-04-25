@@ -56,9 +56,9 @@ describe('AddTodoPageComponent', () => {
         expect(todoService.getTodos).toHaveBeenCalled();
 
         // Mock predefined categories in component + categories from todos
-        expect(component.categories).toContain('Work');
-        expect(component.categories).toContain('Personal');
-        expect(component.categories).toContain('Personal work');
+        expect(component.categoryOptions.map(c => c.value)).toContain('Work');
+        expect(component.categoryOptions.map(c => c.value)).toContain('Personal');
+        expect(component.categoryOptions.map(c => c.value)).toContain('Personal work');
     });
 
     it('should render todo form component', () => {
@@ -70,7 +70,7 @@ describe('AddTodoPageComponent', () => {
         const todoForm = fixture.debugElement.query(By.directive(TodoFormComponent));
         const todoFormComponent = todoForm.componentInstance;
 
-        expect(todoFormComponent.categories).toEqual(component.categories);
+        expect(todoFormComponent.categories).toEqual(component.categoryOptions);
     });
 
     it('should set navigateToListAfterAdd to false on todo form', () => {

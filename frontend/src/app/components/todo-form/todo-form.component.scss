@@ -8,199 +8,256 @@ $text-secondary: #64748b;
 $border-color: #e2e8f0;
 $shadow-color: rgba(0, 0, 0, 0.1);
 $base-font-size: 16px;
-$shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-$form-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+$transition-time: 0.2s;
+$box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+$focus-shadow: 0 0 0 3px rgba($primary-color, 0.15);
 
 :host {
     font-family: system-ui, -apple-system, sans-serif;
 }
 
-/* Card styling */
-.todo-card {
-    background-color: var(--card-background);
-    box-shadow: 0 2px 5px var(--shadow-color);
-    border-radius: 0.75rem;
-    padding: 1.5rem;
-    height: fit-content;
-    width: 100%;
-    box-sizing: border-box;
-
-    h2 {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: var(--text-primary);
-        margin-top: 0;
-        margin-bottom: 1.25rem;
-        padding-bottom: 0.75rem;
-        border-bottom: 1px solid $border-color;
-    }
-}
-
-/* Form card specific styles */
-.form-card {
-    position: sticky;
-    top: 1.5rem;
-    min-width: 250px;
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-/* Input group */
-.input-group {
+.todo-form-container {
+    max-width: 800px;
+    margin: 2rem auto 3rem;
+    padding: 0 1.5rem;
+    font-family: system-ui, -apple-system, sans-serif;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 24px;
     width: 100%;
     box-sizing: border-box;
+    max-width: 600px;
+}
 
-    .title-input {
-        width: 100%;
-        padding: 12px 16px;
-        border-radius: 6px;
-        border: 1px solid $border-color;
+h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: $text-primary;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.5px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+
+    label {
         font-size: 16px;
-        box-sizing: border-box;
-        height: 42px;
-        font-family: system-ui, -apple-system, sans-serif;
-        transition: all 0.2s ease;
-
-        &:hover {
-            border-color: $primary-color;
-        }
-
-        &:focus {
-            outline: none;
-            border-color: $primary-color;
-            box-shadow: 0 0 0 3px rgba($primary-color, 0.2);
-        }
-    }
-
-    .description-area {
-        width: 100%;
-        box-sizing: border-box;
-
-        textarea {
-            width: 100%;
-            padding: 12px 16px;
-            border-radius: 6px;
-            border: 1px solid $border-color;
-            resize: vertical;
-            font-family: system-ui, -apple-system, sans-serif;
-            font-size: 16px;
-            min-height: 100px;
-            box-sizing: border-box;
-            transition: all 0.2s ease;
-
-            &:hover {
-                border-color: $primary-color;
-            }
-
-            &:focus {
-                outline: none;
-                border-color: $primary-color;
-                box-shadow: 0 0 0 3px rgba($primary-color, 0.2);
-            }
-        }
-    }
-
-    select {
-        width: 100%;
-        padding: 10px 16px;
-        border-radius: 6px;
-        border: 1px solid $border-color;
-        font-size: 16px;
-        box-sizing: border-box;
-        background-color: white;
-        appearance: none;
-        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23646b8c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-        background-repeat: no-repeat;
-        background-position: right 10px center;
-        background-size: 16px;
-        height: 42px;
-        font-family: system-ui, -apple-system, sans-serif;
-        transition: all 0.2s ease;
-        padding-right: 40px;
-
-        &:hover {
-            border-color: $primary-color;
-        }
-
-        &:focus {
-            outline: none;
-            border-color: $primary-color;
-            box-shadow: 0 0 0 3px rgba($primary-color, 0.2);
-        }
-
-        option {
-            color: $text-primary;
-            font-family: system-ui, -apple-system, sans-serif;
-        }
-    }
-
-    /* Style for the selected category in the select element */
-    .category-indicator {
-        display: inline-block;
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        margin-right: 8px;
-        vertical-align: middle;
-    }
-
-    .add-button {
-        padding: 12px 16px;
-        background-color: $primary-color;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
         font-weight: 500;
-        font-size: 16px;
-        font-family: system-ui, -apple-system, sans-serif;
-        transition: background-color 0.2s;
-        width: 100%;
-        height: 42px;
-
-        &:hover {
-            background-color: $primary-hover;
-        }
+        color: $text-primary;
+        margin-bottom: 4px;
     }
 }
 
-/* Selected category indication */
-.selected-category {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 8px 12px;
-    background-color: rgba($primary-color, 0.05);
-    border-radius: 6px;
-    font-size: 14px;
+.title-input {
+    width: 100%;
+    padding: 14px 18px;
+    border-radius: 10px;
+    border: 1.5px solid $border-color;
+    font-size: 17px;
+    box-sizing: border-box;
+    height: 52px;
+    font-family: system-ui, -apple-system, sans-serif;
+    transition: all $transition-time;
+    background-color: white;
+    box-shadow: $box-shadow;
     color: $text-primary;
 
-    .category-dot {
+    &::placeholder {
+        color: $text-secondary;
+        opacity: 0.8;
+    }
+
+    &:hover {
+        border-color: $primary-color;
+        background-color: $background-color;
+    }
+
+    &:focus {
+        outline: none;
+        border-color: $primary-color;
+        box-shadow: $focus-shadow;
+    }
+}
+
+.description-input {
+    width: 100%;
+    padding: 14px 18px;
+    border-radius: 10px;
+    border: 1.5px solid $border-color;
+    resize: vertical;
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 17px;
+    min-height: 120px;
+    box-sizing: border-box;
+    transition: all $transition-time;
+    background-color: white;
+    box-shadow: $box-shadow;
+    color: $text-primary;
+
+    &::placeholder {
+        color: $text-secondary;
+        opacity: 0.8;
+    }
+
+    &:hover {
+        border-color: $primary-color;
+        background-color: $background-color;
+    }
+
+    &:focus {
+        outline: none;
+        border-color: $primary-color;
+        box-shadow: $focus-shadow;
+    }
+}
+
+.category-selector {
+    position: relative;
+    width: 100%;
+}
+
+.selected-category {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 1;
+    pointer-events: none;
+
+    .category-indicator {
         display: inline-block;
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        margin-left: 16px;
+        margin-top: 14px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+}
+
+.category-input {
+    width: 100%;
+    padding: 14px 18px;
+    padding-right: 36px;
+    border-radius: 10px;
+    border: 1.5px solid $border-color;
+    font-size: 17px;
+    box-sizing: border-box;
+    background-color: white;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23646b8c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 16px;
+    height: 52px;
+    font-family: system-ui, -apple-system, sans-serif;
+    transition: all $transition-time;
+    box-shadow: $box-shadow;
+    color: $text-primary;
+
+    &:hover {
+        border-color: $primary-color;
+        background-color: $background-color;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    }
+
+    &:focus {
+        outline: none;
+        border-color: $primary-color;
+        box-shadow: $focus-shadow;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    }
+
+    option {
+        color: $text-primary;
+        font-family: system-ui, -apple-system, sans-serif;
+        padding: 12px;
+        font-size: 16px;
+    }
+}
+
+.add-button {
+    padding: 14px 18px;
+    background-color: $primary-color;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 17px;
+    font-family: system-ui, -apple-system, sans-serif;
+    transition: all $transition-time;
+    width: 100%;
+    height: 52px;
+    box-shadow: 0 2px 4px rgba($primary-color, 0.3);
+    margin-top: 10px;
+
+    &:hover {
+        background-color: $primary-hover;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba($primary-color, 0.35);
+    }
+
+    &:focus {
+        outline: none;
+        box-shadow: $focus-shadow, 0 2px 4px rgba($primary-color, 0.3);
+    }
+
+    &:active {
+        transform: translateY(0);
+        box-shadow: 0 1px 3px rgba($primary-color, 0.3);
     }
 }
 
 /* Responsive design for small tablets */
 @media (max-width: 768px) {
-    .todo-card {
-        width: 100%;
+    .todo-form-container {
+        gap: 20px;
     }
 
-    .input-group {
-        gap: 12px;
+    h2 {
+        font-size: 1.75rem;
+        margin-bottom: 1.5rem;
     }
 }
 
 /* Responsive design for mobile */
 @media (max-width: 480px) {
-    .todo-card {
-        padding: 1rem;
-        border-radius: 0.5rem;
+    .todo-form-container {
+        padding: 0 1rem;
+        margin: 1.5rem auto 2.5rem;
+        gap: 16px;
+    }
+
+    .form-group {
+        gap: 6px;
+    }
+
+    .title-input,
+    .description-input,
+    .category-input,
+    .add-button {
+        padding: 12px 16px;
+        font-size: 16px;
+        height: 48px;
+    }
+
+    .description-input {
+        min-height: 100px;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1.25rem;
+    }
+
+    label {
+        font-size: 15px;
     }
 }
