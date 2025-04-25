@@ -3,6 +3,11 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
+interface CategoryOption {
+  value: string;
+  label: string;
+}
+
 @Component({
   selector: 'app-todo-form',
   standalone: true,
@@ -11,7 +16,7 @@ import { Router } from '@angular/router';
   styleUrl: './todo-form.component.scss'
 })
 export class TodoFormComponent {
-  @Input() categories: string[] = [];
+  @Input() categories: CategoryOption[] = [];
   @Input() navigateToListAfterAdd: boolean = false;
   @Output() addTodoEvent = new EventEmitter<{
     title: string;
@@ -32,18 +37,18 @@ export class TodoFormComponent {
     'Health': '#55efc4'        // Mint
   };
 
-  newTodoTitle = '';
-  newTodoDescription = '';
-  newTodoCategory = '';
+  title = '';
+  description = '';
+  selectedCategory: string | null = null;
 
   constructor(private router: Router) { }
 
   addTodo(): void {
-    if (this.newTodoTitle.trim()) {
-      const category = this.newTodoCategory.trim() || 'General';
+    if (this.title.trim()) {
+      const category = this.selectedCategory || 'General';
       this.addTodoEvent.emit({
-        title: this.newTodoTitle.trim(),
-        description: this.newTodoDescription.trim(),
+        title: this.title.trim(),
+        description: this.description.trim(),
         category
       });
       this.resetForm();
@@ -56,9 +61,9 @@ export class TodoFormComponent {
   }
 
   resetForm(): void {
-    this.newTodoTitle = '';
-    this.newTodoDescription = '';
-    this.newTodoCategory = '';
+    this.title = '';
+    this.description = '';
+    this.selectedCategory = null;
   }
 
   getCategoryColor(category: string): string {
@@ -69,6 +74,13 @@ export class TodoFormComponent {
 
     // Generate a color based on category name for consistency
     return this.generateColorFromString(category);
+  }
+
+  getSelectedCategoryLabel(): string {
+    if (!this.selectedCategory) return '';
+
+    const categoryOption = this.categories.find(cat => cat.value === this.selectedCategory);
+    return categoryOption ? categoryOption.label : this.selectedCategory;
   }
 
   getCategoryTextColor(category: string): string {

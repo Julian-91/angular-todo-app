@@ -27,7 +27,11 @@ type Story = StoryObj<TodoFormComponent>;
 // Default state
 export const Default: Story = {
     args: {
-        categories: ['Work', 'Personal', 'Shopping', 'Health']
+        categories: [
+            { value: 'Work', label: 'Work' },
+            { value: 'Personal', label: 'Personal' },
+            { value: 'Shopping', label: 'Shopping' }
+        ]
     }
 };
 
@@ -41,6 +45,9 @@ export const NoCategories: Story = {
 // Many categories
 export const ManyCategories: Story = {
     args: {
-        categories: Array(10).fill(0).map((_, i) => `Category ${i + 1}`)
+        categories: Array(10).fill(0).map((_, i) => ({
+            value: `Category ${i + 1}`,
+            label: `Category ${i + 1}`
+        }))
     }
 }; 

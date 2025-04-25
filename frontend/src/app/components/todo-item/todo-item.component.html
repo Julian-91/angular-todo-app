@@ -13,10 +13,14 @@
                 <h3 class="todo-title" [class.completed]="todo.isCompleted" (click)="onToggle()">
                     {{ todo.title }}
                 </h3>
-                <span *ngIf="todo.category" class="category" [style.background-color]="getCategoryColor(todo.category)"
-                    [style.color]="getCategoryTextColor(todo.category)">
-                    {{ todo.category }}
-                </span>
+                <div class="tags-container">
+                    <span *ngIf="todo.category" class="category"
+                        [style.background-color]="getCategoryColor(todo.category)"
+                        [style.color]="getCategoryTextColor(todo.category)">
+                        {{ todo.category }}
+                    </span>
+                    <!-- Reserved space for future tags -->
+                </div>
             </div>
 
             <!-- Description toggle and preview -->
@@ -61,9 +65,7 @@
                 (keydown)="onKeyDown($event)" placeholder="Todo title" />
 
             <select class="edit-category" [ngModel]="editedCategory" (ngModelChange)="editedCategory = $event">
-                <option *ngFor="let category of uniqueCategories" [value]="category"
-                    [style.background-color]="getCategoryColor(category)"
-                    [style.color]="getCategoryTextColor(category)">
+                <option *ngFor="let category of uniqueCategories" [value]="category">
                     {{category}}
                 </option>
             </select>
